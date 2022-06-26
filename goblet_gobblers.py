@@ -29,10 +29,9 @@ rules:
     - each board internal list represents a spot on the board (will push/pop pieces)
 ------------------------------------------------------------------------------------------
 
-current TODO: init variables
+current TODO: display board
 
 later:
-    - display board
     - pick piece
     - pick spot
     - check win/tie
@@ -95,25 +94,27 @@ def get_args():
 # --------------------------------------------------
 
 
-class Piece:
-    """Class to represent game pieces"""
-
-    def __init__(self, player, size, name):
-        self.player = player  # X or O
-        self.size = size  # 1, 2, 3
-        self.name = name  # X1, X2, O3, O4, etc
-
-    def __gt__(self, other):
-        return self.size > other.size
+def display_board(board, x_pieces, o_pieces):
 
 
-# --------------------------------------------------
 
-
-# display_board (accepts: board / return: nothing)
     # print board and players piece lists (see details below)
+    print(f'Player-X                                       Player-O')
+    print(f'-------------------------------------          -------------------------------------')
+    print(f'')  # x pieces     Pieces     o pieces
+
+    # TODO: trying to figure out best way to loop through x_pieces and print self.name
+    #           what will be in th x_pieces list if that piece is popped?
+    #
+    #       If not popped:  self.name == XX, self.player = X
+    #       If yes popped:  list will not have type 'Piece'
+    #           # going to stop here and refactor pieces --> no need to use a class
+    #
+    #
+
+
 """
-display board (*smooth this out)
+display board 
 --------------
 
 Player-X                                       Player-O
@@ -135,7 +136,7 @@ Player-X                                       Player-O
                                 X    |   XX    |   XXX
                                    7 |       8 |       9
 
-
+Error: Cannot nest onto a piece that is equal or greater in size
 Player-X pick your piece (X1, X2, etc):
 Player-X pick your spot (1-9):
 
@@ -195,21 +196,9 @@ def main():
 
     args = get_args()  # only used for -h flag
 
-    # init pieces, lists of pieces, and board
-    X1 = Piece('X', 3, 'X1')
-    X2 = Piece('X', 3, 'X2')
-    X3 = Piece('X', 2, 'X3')
-    X4 = Piece('X', 2, 'X4')
-    X5 = Piece('X', 1, 'X5')
-    X6 = Piece('X', 1, 'X6')
-    O1 = Piece('O', 3, 'O1')
-    O2 = Piece('O', 3, 'O2')
-    O3 = Piece('O', 2, 'O3')
-    O4 = Piece('O', 2, 'O4')
-    O5 = Piece('O', 1, 'O5')
-    O6 = Piece('O', 1, 'O6')
-    x_pieces = [X1, X2, X3, X4, X5, X6]
-    o_pieces = [O1, O2, O3, O4, O5, O6]
+    # init pieces, and board
+    x_pieces = ['XXX', 'XXX', 'XX', 'XX', 'X', 'X']
+    o_pieces = ['OOO', 'OOO', 'OO', 'OO', 'O', 'O']
     board = [[], [], [], [], [], [], [], [], []]
 
     # rando chose player for first turn
