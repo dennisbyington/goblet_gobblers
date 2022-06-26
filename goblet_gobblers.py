@@ -25,7 +25,9 @@ rules:
     play until someone wins
 
 ** notes to add **
+    - describe all data structures here instead of in each docstring
     - pieces will be removed from the pieces lists and inserted onto the board
+        - will never have to add pieces back to the list, they must remain on the board once placed
     - each board internal list represents a spot on the board (will push/pop pieces)
 ------------------------------------------------------------------------------------------
 
@@ -95,62 +97,27 @@ def get_args():
 
 
 def display_board(board, x_pieces, o_pieces):
+    """Displays player's piece lists, piece names, and game board"""
 
-
-
-    # print board and players piece lists (see details below)
     print(f'Player-X                                       Player-O')
     print(f'-------------------------------------          -------------------------------------')
-    print(f'')  # x pieces     Pieces     o pieces
-
-    # TODO: trying to figure out best way to loop through x_pieces and print self.name
-    #           what will be in th x_pieces list if that piece is popped?
-    #
-    #       If not popped:  self.name == XX, self.player = X
-    #       If yes popped:  list will not have type 'Piece'
-    #           # going to stop here and refactor pieces --> no need to use a class
-    #
-    #
-
-
-"""
-display board 
---------------
-
-Player-X                                       Player-O
--------------------------------------          -------------------------------------
-| XXX | XXX | XX  | XX  |  X  |  X  |  Pieces  | OOO | OOO | OO  | OO  |  O  |  O  |
--------------------------------------          -------------------------------------
-| X1  | X2  | X3  | X4  |  X5 |  X6 |  Names   | O1  | O2  | O3  | O4  |  O5 |  O6 |
--------------------------------------          -------------------------------------
-
-                                     |         |
-                               XX    |    X    |   OOO
-                                   1 |       2 |       3
-                            -----------------------------
-                                     |         |
-                                O    |   OO    |   OOO
-                                   4 |       5 |       6
-                            -----------------------------
-                                     |         |
-                                X    |   XX    |   XXX
-                                   7 |       8 |       9
-
-Error: Cannot nest onto a piece that is equal or greater in size
-Player-X pick your piece (X1, X2, etc):
-Player-X pick your spot (1-9):
-
-
-after pieces have been used
----------------------------
-
-Player-X                                       Player-O
--------------------------------------          -------------------------------------
-|     | XXX |     | XX  |     |  X  |  Pieces  | OOO | OOO |     |     |  O  |  O  |
--------------------------------------          -------------------------------------
-|     | X2  |     | X4  |     |  X6 |  Labels  | O1  | O2  |     |     |  O5 |  O6 |
--------------------------------------          -------------------------------------
-"""
+    print(f'| {x_pieces[0]} | {x_pieces[1]} | {x_pieces[2]} | {x_pieces[3]} | {x_pieces[4]} | {x_pieces[5]} |  Pieces  '
+          f'| {o_pieces[0]} | {o_pieces[1]} | {o_pieces[2]} | {o_pieces[3]} | {o_pieces[4]} | {o_pieces[5]} |')
+    print(f'-------------------------------------          -------------------------------------')
+    print(f'| X1  | X2  | X3  | X4  |  X5 |  X6 |  Names   | O1  | O2  | O3  | O4  |  O5 |  O6 |')
+    print(f'-------------------------------------          -------------------------------------')
+    print(f'                                     |         |         ')
+    print(f'                               {board[0][0]}   |   {board[1][0]}   |   {board[2][0]}   ')
+    print(f'                                   1 |       2 |       3 ')
+    print(f'                            -----------------------------')
+    print(f'                                     |         |         ')
+    print(f'                               {board[3][0]}   |   {board[4][0]}   |   {board[5][0]}   ')
+    print(f'                                   4 |       5 |       6 ')
+    print(f'                            -----------------------------')
+    print(f'                                     |         |         ')
+    print(f'                               {board[6][0]}   |   {board[7][0]}   |   {board[8][0]}   ')
+    print(f'                                   7 |       8 |       9 ')
+    print(f'')
 
 
 # --------------------------------------------------
@@ -160,12 +127,22 @@ Player-X                                       Player-O
     # can select from own list or pieces on board (*need to figure out how to enumerate/label these)
 
 
+
+
+    """
+    Player-X pick your piece (X1, X2, etc):   
+    Player-X pick your spot (1-9):
+    """
+
+
 # --------------------------------------------------
 
 
 # pick_spot (accepts: board, piece / returns: updated board)
     # check valid move
+        # Error: Cannot nest onto a piece that is equal or greater in size
     # move piece(s)
+        # ensure piece has been replaced by '-' in list (for display board functionality)
 
 
 # --------------------------------------------------
@@ -197,14 +174,15 @@ def main():
     args = get_args()  # only used for -h flag
 
     # init pieces, and board
-    x_pieces = ['XXX', 'XXX', 'XX', 'XX', 'X', 'X']
-    o_pieces = ['OOO', 'OOO', 'OO', 'OO', 'O', 'O']
-    board = [[], [], [], [], [], [], [], [], []]
+    x_pieces = ['XXX', 'XXX', 'OO ', 'XX ', ' X ', ' X ']   # extra spaces for display formatting
+    o_pieces = ['XXX', 'OOO', 'OO ', 'OO ', ' X ', ' O ']
+    board = [['   '], ['   '], ['   '], ['   '], ['   '], ['   '], ['   '], ['   '], ['   ']]
 
     # rando chose player for first turn
 
     # while no winner/tie:
         # display board
+    display_board(board, x_pieces, o_pieces)
 
         # pick piece to play
 
