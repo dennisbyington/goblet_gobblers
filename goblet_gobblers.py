@@ -5,6 +5,7 @@ Dennis Byington
 dennis.byington@mac.com
 25 Jun 2022
 CLI implementation of the Goblet Gobblers board game
+
 ------------------------------------------------------------------------------------------
 general info:
 -------------
@@ -22,6 +23,10 @@ rules:
     larger pieces may nest on top of smaller pieces only (must be >, not <=)
     if a piece is moved that is already on the board, what ever was below is now active
     play until someone wins
+
+** notes to add **
+    - pieces will be removed from the pieces lists and inserted onto the board
+    - each board internal list represents a spot on the board (will push/pop pieces)
 ------------------------------------------------------------------------------------------
 
 current TODO: init variables
@@ -36,10 +41,12 @@ later:
     - refactor & smooth
 """
 
+
 import argparse
 
 
 # --------------------------------------------------
+
 
 def get_args():
     """Get command-line arguments
@@ -87,51 +94,21 @@ def get_args():
 
 # --------------------------------------------------
 
-def main():
-    """Short description
 
-    Long description
+class Piece:
+    """Class to represent game pieces"""
 
-    Args:
-        Arg:
-            descrption
+    def __init__(self, player, size, name):
+        self.player = player  # X or O
+        self.size = size  # 1, 2, 3
+        self.name = name  # X1, X2, O3, O4, etc
 
-    Returns:
-        return:
-            description
-    """
+    def __gt__(self, other):
+        return self.size > other.size
 
-    args = get_args()  # only used for -h flag
-
-
-# init all variables
-"""
-data structures
----------------
-Piece (x6) -> class (members: player (X/O), size (1, 2, 3), name (X1, X2...))
-    overload equality operators to make > < = easy to check (for nesting)
-
-board (x1) -> list of lists (of Piece classes) -> so that you push/pop Pieces onto a spot
-
-pieces (x2) -> list of Pieces (6 per player, 2 of each 3 sizes)
-    as these are used they will be popped off the pieces list and inserted into the board
-"""
-
-
-# rando chose player for first turn
-
-# while no winner/tie:
-    # display board
-
-    # pick piece to play
-
-    # pick spot
-
-    # check win/tie
-        # if yes: break
-        # if no:  continue
 
 # --------------------------------------------------
+
 
 # display_board (accepts: board / return: nothing)
     # print board and players piece lists (see details below)
@@ -143,7 +120,7 @@ Player-X                                       Player-O
 -------------------------------------          -------------------------------------
 | XXX | XXX | XX  | XX  |  X  |  X  |  Pieces  | OOO | OOO | OO  | OO  |  O  |  O  |
 -------------------------------------          -------------------------------------
-| X1  | X2  | X3  | X4  |  X5 |  X6 |  Labels  | O1  | O2  | O3  | O4  |  O5 |  O6 |
+| X1  | X2  | X3  | X4  |  X5 |  X6 |  Names   | O1  | O2  | O3  | O4  |  O5 |  O6 |
 -------------------------------------          -------------------------------------
 
                                      |         |
@@ -174,25 +151,83 @@ Player-X                                       Player-O
 -------------------------------------          -------------------------------------
 """
 
+
 # --------------------------------------------------
+
 
 # pick_piece (accepts: board, player?, player's piece list / returns: piece)
     # can select from own list or pieces on board (*need to figure out how to enumerate/label these)
 
+
 # --------------------------------------------------
+
 
 # pick_spot (accepts: board, piece / returns: updated board)
     # check valid move
     # move piece(s)
 
+
 # --------------------------------------------------
+
 
 # check_win_tie (accepts: board / returns: int (0 = no win/tie / 1 = win or tie)
     # go through rows, columns, diagonals
     # check for wins & ties
     # print message if so
 
+
 # --------------------------------------------------
+
+
+def main():
+    """Short description
+
+    Long description
+
+    Args:
+        Arg:
+            descrption
+
+    Returns:
+        return:
+            description
+    """
+
+    args = get_args()  # only used for -h flag
+
+    # init pieces, lists of pieces, and board
+    X1 = Piece('X', 3, 'X1')
+    X2 = Piece('X', 3, 'X2')
+    X3 = Piece('X', 2, 'X3')
+    X4 = Piece('X', 2, 'X4')
+    X5 = Piece('X', 1, 'X5')
+    X6 = Piece('X', 1, 'X6')
+    O1 = Piece('O', 3, 'O1')
+    O2 = Piece('O', 3, 'O2')
+    O3 = Piece('O', 2, 'O3')
+    O4 = Piece('O', 2, 'O4')
+    O5 = Piece('O', 1, 'O5')
+    O6 = Piece('O', 1, 'O6')
+    x_pieces = [X1, X2, X3, X4, X5, X6]
+    o_pieces = [O1, O2, O3, O4, O5, O6]
+    board = [[], [], [], [], [], [], [], [], []]
+
+    # rando chose player for first turn
+
+    # while no winner/tie:
+        # display board
+
+        # pick piece to play
+
+        # pick spot
+
+        # check win/tie
+            # if yes: break
+            # if no:  continue
+
+
+# --------------------------------------------------
+
 
 if __name__ == '__main__':
     main()
