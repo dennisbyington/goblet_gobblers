@@ -37,14 +37,18 @@ rules:
         - will never have to add pieces back to the list, they must remain on the board once placed
     - each board internal list represents a spot on the board (will push/pop pieces)
 
+    Board data structure:
+    ---------------------
+    board[1][-1] board[2][-1] board[3][-1]          'XXX' 'OOO' 'OO '
+    board[4][-1] board[5][-1] board[6][-1]   <==>   'XX ' ' X ' 'XX '
+    board[7][-1] board[8][-1] board[9][-1]          ' O ' 'OOO' ' X '
 
 ** check here for additional/clarified rules: https://docs.racket-lang.org/games/gobblet.html
 ------------------------------------------------------------------------------------------
 
-current TODO: incorporate pickup piece & play piece
+current TODO: check win
 
 later:
-    - check win (no ties - see here: https://docs.racket-lang.org/games/gobblet.html)
     - rando choose 1st player
     - incorporate all together
     - refactor, python-ize (look at tpp and online code for ideas) & smooth
@@ -64,9 +68,6 @@ def get_args():
     on the flags & options initialized within this function.
 
     In this instance, no options/flags are set except the default [-h] (help).
-
-    Args:
-        None
 
     Returns:
         parser.parse_args(): An argparse object with members that correlate to any
@@ -277,11 +278,147 @@ def play_piece(board, pieces, piece_to_play, piece_spot):
 # --------------------------------------------------
 
 
-# check_win (accepts: board, player / returns: win (bool), player (string representing player that won)
-    # go through rows, columns, diagonals
-        # if
-    # check for wins
-    # print message if so
+def check_win(board, player):
+    """Checks the current board for winning sequences
+
+    Cycles through each possible winning sequence of the board (rows, columns, diagonals).  If winning
+    sequence is found, that player is appended to the winners list.  Winner is determined using the rules
+    set in the top docstring.
+
+    Possible outcomes:
+        - No winning sequences: play continues
+        - One winning sequence: that player wins
+        - Two winning sequences
+            - Same player x2: that player wins
+            - 2 different players: The opposing player has won (see below)
+
+                If moving a piece exposes a winning sequence for the opponent,
+                and if the destination for the move does not cover up one of
+                the other pieces in the sequence, then the opponent wins—even
+                if the move makes a winning sequence for the moving player.
+
+    Board data structure:
+    ---------------------
+    board[1][-1] board[2][-1] board[3][-1]          'XXX' 'OOO' 'OO '
+    board[4][-1] board[5][-1] board[6][-1]   <==>   'XX ' ' X ' 'XX '
+    board[7][-1] board[8][-1] board[9][-1]          ' O ' 'OOO' ' X '
+
+    Args:
+        board:
+            current playing board
+        player:
+            current player
+
+    Returns:
+        win:
+            bool that indicates if a winning sequence has been found
+        winner
+            string that represents the winner (or '' if no winner)
+        """
+
+    winner = ''
+    win = False
+    winners = []
+
+    # check each sequence for winner and append to list if found
+    for a, b, c in ((1, 2, 3), (4, 5, 6), (7, 8, 9), (1, 4, 7), (2, 5, 8), (3, 6, 9), (1, 5, 9), (3, 5, 7)):
+        if (board[a][-1].count('X') > 0) and (board[b][-1].count('X') > 0) and (board[c][-1].count('X') > 0):
+            winners.append('X')
+        if (board[a][-1].count('O') > 0) and (board[b][-1].count('O') > 0) and (board[c][-1].count('O') > 0):
+            winners.append('O')
+
+    # check number of winning sequences found
+    if len(winners) == 0:  # no winners, return default values
+        return win, winner
+    elif len(winners) == 1:  # 1 winner, return that player
+        win = True
+        winner = winners[0]
+        return win, winner
+    else:  # 2 winning sequences
+        # if both the same player: return that player as winner
+        if winners[0] == winners[1]:
+            win = True
+            winner = winners[0]  # get winner from winning_sequence
+            return win, winner
+        # if different players, the opposing player has won
+        else:
+            win = True
+            # get opposing player
+            if player == 'X':
+                winner = 'O'
+            else:
+                winner = 'X'
+            return win, winner
+
+
+# --------------------------------------------------
+
+
+def test_check_win():
+    """Test check_win() function
+
+    See check_win() docstring for full functionality
+    """
+
+    assert check_win([['buffer'], ['   '], ['   '], ['   '],    # blank board: no win
+                                  ['   '], ['   '], ['   '],
+                                  ['   '], ['   '], ['   ']], 'X') == (False, '')
+
+    assert check_win([['buffer'], [' X '], ['XX '], ['OOO'],    # random board: no win
+                                  [' O '], ['OO '], [' X '],
+                                  ['XX '], ['XXX'], ['OOO']], 'X') == (False, '')
+
+    assert check_win([['buffer'], [' X '], ['XX '], ['XXX'],    # current player -> row #1 winner
+                                  [' O '], ['OO '], [' X '],
+                                  ['XX '], ['XXX'], ['OOO']], 'X') == (True, 'X')
+
+    assert check_win([['buffer'], [' O '], ['XX '], [' O '],    # current player -> row #3 winner
+                                  ['OO '], ['OO '], [' X '],
+                                  ['XX '], ['XXX'], [' X ']], 'X') == (True, 'X')
+
+    assert check_win([['buffer'], [' X '], ['XX '], ['OOO'],    # opposing player -> row #2 winner
+                                  [' O '], ['OO '], [' O '],
+                                  ['XX '], ['OO '], ['XXX']], 'X') == (True, 'O')
+
+    assert check_win([['buffer'], [' X '], ['XX '], ['XXX'],    # current player -> col #1 winner
+                                  [' X '], ['OO '], [' O '],
+                                  ['XX '], ['XXX'], ['OOO']], 'X') == (True, 'X')
+
+    assert check_win([['buffer'], [' O '], ['XX '], ['XXX'],    # current player -> col #3 winner
+                                  [' O '], ['OO '], [' X '],
+                                  ['XX '], ['OO '], ['XXX']], 'X') == (True, 'X')
+
+    assert check_win([['buffer'], [' X '], ['OOO'], ['OOO'],    # opposing player -> col #2 winner
+                                  [' O '], ['OO '], [' X '],
+                                  ['XX '], ['OO '], ['XXX']], 'X') == (True, 'O')
+
+    assert check_win([['buffer'], [' X '], ['OOO'], ['OOO'],    # current player -> diag #1 winner
+                                  [' O '], ['XX '], [' X '],
+                                  ['XX '], ['OO '], ['XXX']], 'X') == (True, 'X')
+
+    assert check_win([['buffer'], [' O '], ['OOO'], ['XXX'],    # current player -> diag #2 winner
+                                  [' O '], ['XX '], ['OO '],
+                                  ['XX '], ['OO '], ['XXX']], 'X') == (True, 'X')
+
+    assert check_win([['buffer'], [' X '], ['XX '], ['XXX'],    # 2 wins: current player -> row #1 & #3 winner
+                                  [' O '], ['OO '], [' X '],
+                                  ['XX '], ['XX '], ['XXX']], 'X') == (True, 'X')
+
+    assert check_win([['buffer'], [' X '], ['XX '], ['OOO'],    # 2 wins: current player -> col #1 & #2 winner
+                                  [' X '], ['XX '], [' X '],
+                                  ['XX '], ['XX '], ['OOO']], 'X') == (True, 'X')
+
+    assert check_win([['buffer'], [' X '], ['OO '], ['XXX'],    # 2 wins: current player -> diag #1 & #2 winner
+                                  [' O '], ['XX '], [' O '],
+                                  ['XX '], ['OOO'], ['XXX']], 'X') == (True, 'X')
+
+    assert check_win([['buffer'], [' X '], ['OO '], ['XXX'],    # 2 col wins: opposing player is winner
+                                  [' X '], ['OO '], [' O '],
+                                  ['XX '], ['OO '], ['XXX']], 'X') == (True, 'O')
+
+    assert check_win([['buffer'], [' X '], ['XX '], ['XXX'],  # 2 row wins: opposing player is winner
+                                  [' O '], ['OO '], [' O '],
+                                  ['XX '], ['OO '], ['XXX']], 'X') == (True, 'O')
 
 
 # --------------------------------------------------
@@ -294,7 +431,7 @@ def main():
 
     Args:
         Arg:
-            descrption
+            description
 
     Returns:
         return:
@@ -304,7 +441,8 @@ def main():
     args = get_args()  # only used for -h flag
 
     # init pieces, and board
-    pieces = ['XXX', 'XXX', 'XX ', 'XX ', ' X ', ' X ', 'OOO', 'OOO', 'OO ', 'OO ', ' O ', ' O ']  # extra spaces for display formatting
+    pieces = ['XXX', 'XXX', 'XX ', 'XX ', ' X ', ' X ',  # extra spaces for display formatting
+              'OOO', 'OOO', 'OO ', 'OO ', ' O ', ' O ']
     board = ['buffer', ['   '], ['   '], ['   '],
                        ['   '], ['   '], ['   '],
                        ['   '], ['   '], ['   ']]  # extra list for index buffer
@@ -323,14 +461,15 @@ def main():
         display_board(board, pieces)
 
         # check win/tie
-        win = False  # fixme: build function for this
+        win, winner = check_win(board, player)
         if win:
-            pass  # send message & break
-
-        if player == 'X':
-            player = 'O'
-        else:
-            player = 'X'
+            print(f'Player-{winner} is the winner!')  # send message & break
+            break
+        else:  # change players and goto next turn
+            if player == 'X':
+                player = 'O'
+            else:
+                player = 'X'
 
 
 # --------------------------------------------------
