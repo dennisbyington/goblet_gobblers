@@ -46,16 +46,15 @@ rules:
 ** check here for additional/clarified rules: https://docs.racket-lang.org/games/gobblet.html
 ------------------------------------------------------------------------------------------
 
-current TODO: check win
+current TODO: rando choose 1st player
 
 later:
-    - rando choose 1st player
-    - incorporate all together
     - refactor, python-ize (look at tpp and online code for ideas) & smooth
 """
 
 
 import argparse
+import random
 
 
 # --------------------------------------------------
@@ -440,15 +439,14 @@ def main():
 
     args = get_args()  # only used for -h flag
 
-    # init pieces, and board
+    # initial game variables
     pieces = ['XXX', 'XXX', 'XX ', 'XX ', ' X ', ' X ',  # extra spaces for display formatting
               'OOO', 'OOO', 'OO ', 'OO ', ' O ', ' O ']
     board = ['buffer', ['   '], ['   '], ['   '],
                        ['   '], ['   '], ['   '],
                        ['   '], ['   '], ['   ']]  # extra list for index buffer
+    player = random.choice('XO')  # rando chose player for first turn
 
-    # rando chose player for first turn
-    player = 'X'  # remove later and use random choice
     display_board(board, pieces)
 
     while True:
