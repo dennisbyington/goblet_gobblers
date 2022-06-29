@@ -6,50 +6,36 @@ dennis.byington@mac.com
 25 Jun 2022
 CLI implementation of the Goblet Gobblers board game
 
-------------------------------------------------------------------------------------------
-general info:
--------------
-game elements:
-    board
-    players (2)
-    pieces (6 per player: 2 large, 2 medium, 2 small)
+Game introduction:
+------------------
+Goblet Gobblers is a tic-tac-toe style board game where players can 'gobble' their opponents pieces.
+Two players (X & O) begin with 6 pieces: 2 large, 2 medium, 2 small.
 
-game play:
-    players take turns placing pieces on the board
-        may choose a piece not in play or one on the board already (need to remember what is nested)
-    check for win after each turn (should not have a draw but may have a tie?)
+Players take turn placing pieces on the board. Players may choose a piece not in play or one on the board
+already (although it is important to remember what has been 'gobbled' because uncovering an opposing player's
+piece makes it active. Once piece is picked up it must be played. Larger pieces may nest on top of smaller
+pieces only.  Play continues until someone wins.
 
-rules:
-    larger pieces may nest on top of smaller pieces only (must be >, not <=)
-    if a piece is moved that is already on the board, what ever was below is now active
-    play until someone wins.  Once piece is picked up it must be played
+Note: If moving a piece exposes a winning sequence for the opponent, and if the destination for the move
+does not cover up one of the other pieces in the sequence, then the opponent wins—even if the move makes a
+winning sequence for the moving player.
 
-    NO TIES *************************
-    If moving a piece exposes a winning sequence for the opponent, and if the destination for the move
-    does not cover up one of the other pieces in the sequence, then the opponent wins—even if the move
-    makes a winning sequence for the moving player.
+A pdf of the board games rules can be found in this directory.
+Check here for additional rules: https://docs.racket-lang.org/games/gobblet.html
 
-    * add pdf of rules into the folder (with any additional rules explained in comments here
+Data structures:
+----------------------------
+    board: list of lists of strings.  Pieces are appended to list when played and popped from list when picked up.
+                                      [-1] of each spot is the piece on 'top'
 
-** notes to add **
-    - describe all data structures here instead of in each docstring
-    - pieces will be removed from the pieces lists and inserted onto the board
-        - will never have to add pieces back to the list, they must remain on the board once placed
-    - each board internal list represents a spot on the board (will push/pop pieces)
+        board[1][-1] board[2][-1] board[3][-1]          'XXX' 'OOO' 'OO '
+        board[4][-1] board[5][-1] board[6][-1]   <==>   'XX ' ' X ' 'XX '
+        board[7][-1] board[8][-1] board[9][-1]          ' O ' 'OOO' ' X '
 
-    Board data structure:
-    ---------------------
-    board[1][-1] board[2][-1] board[3][-1]          'XXX' 'OOO' 'OO '
-    board[4][-1] board[5][-1] board[6][-1]   <==>   'XX ' ' X ' 'XX '
-    board[7][-1] board[8][-1] board[9][-1]          ' O ' 'OOO' ' X '
+    pieces: list of strings.  Represents the player's pieces.  Items 0-5 are X-pieces; 6-11 are O-pieces.
+                              (the extra spaces for display formatting)
 
-** check here for additional/clarified rules: https://docs.racket-lang.org/games/gobblet.html
-------------------------------------------------------------------------------------------
-
-current TODO: rando choose 1st player
-
-later:
-    - refactor, python-ize (look at tpp and online code for ideas) & smooth
+        ['XXX', 'XXX', 'XX ', 'XX ', ' X ', ' X ', 'OOO', 'OOO', 'OO ', 'OO ', ' O ', ' O ']
 """
 
 
@@ -134,21 +120,6 @@ def display_board(board, pieces):
 # --------------------------------------------------
 
 
-# pick_piece (accepts: board, player?, player's piece list / returns: piece)
-    # can select from own list or pieces on board (*need to figure out how to enumerate/label these)
-
-
-
-
-    """
-    Player-X pick your piece (X1, X2, etc):   
-    Player-X pick your spot (1-9):
-    """
-
-
-# --------------------------------------------------
-
-
 def pickup_piece_to_play(board, pieces, player):
     """Player picks up piece to play
 
@@ -160,13 +131,18 @@ def pickup_piece_to_play(board, pieces, player):
     Removes piece from list/board
 
     Args:
-        See top docstring
+        board:
+            See top docstring
+        pieces:
+            See top docstring
+        player:
+            String representation of current player
 
     Returns:
-        piece_to_play <string>
-            representation of piece that was selected.  Ex: 'XXX' 'OO ' ' X '
-        piece_spot <int>
-            index piece was picked up from
+        piece_to_play:
+            String: representation of piece that was selected.  Ex: 'XXX' 'OO ' ' X '
+        piece_spot
+            Int: index piece was picked up from
     """
 
     piece_to_play = ''
@@ -224,7 +200,7 @@ def pickup_piece_to_play(board, pieces, player):
 
 
 def play_piece(board, pieces, piece_to_play, piece_spot):
-    """Player piece on board
+    """Player chooses where to play piece on board
 
         Prompts player for index of spot to play on
         Validates spot to verify:
@@ -233,7 +209,14 @@ def play_piece(board, pieces, piece_to_play, piece_spot):
         Places piece onto board
 
         Args:
-            See top docstring
+            board:
+                See top docstring
+            pieces:
+                See top docstring
+            piece_to_play:
+                String: Piece that current player has chosen to play
+            piece_spot:
+                Int: Spot that piece_to_play was picked up from
 
         Returns:
             None
@@ -289,30 +272,19 @@ def check_win(board, player):
         - One winning sequence: that player wins
         - Two winning sequences
             - Same player x2: that player wins
-            - 2 different players: The opposing player has won (see below)
-
-                If moving a piece exposes a winning sequence for the opponent,
-                and if the destination for the move does not cover up one of
-                the other pieces in the sequence, then the opponent wins—even
-                if the move makes a winning sequence for the moving player.
-
-    Board data structure:
-    ---------------------
-    board[1][-1] board[2][-1] board[3][-1]          'XXX' 'OOO' 'OO '
-    board[4][-1] board[5][-1] board[6][-1]   <==>   'XX ' ' X ' 'XX '
-    board[7][-1] board[8][-1] board[9][-1]          ' O ' 'OOO' ' X '
+            - 2 different players: The opposing player has won (see top docstring for rules)
 
     Args:
         board:
-            current playing board
+            See top docstring
         player:
-            current player
+            String: current player
 
     Returns:
         win:
-            bool that indicates if a winning sequence has been found
+            Bool: indicates if a winning sequence has been found
         winner
-            string that represents the winner (or '' if no winner)
+            String: Winning player (or '' if no winner)
         """
 
     winner = ''
@@ -354,10 +326,7 @@ def check_win(board, player):
 
 
 def test_check_win():
-    """Test check_win() function
-
-    See check_win() docstring for full functionality
-    """
+    """Test check_win() function.  See check_win() docstring for full functionality"""
 
     assert check_win([['buffer'], ['   '], ['   '], ['   '],    # blank board: no win
                                   ['   '], ['   '], ['   '],
@@ -424,17 +393,20 @@ def test_check_win():
 
 
 def main():
-    """Short description
+    """Main function
 
-    Long description
+    Initializes game variables and enters a forever loop where the game logic is located.  Stays here until
+    a winner is found.
 
-    Args:
-        Arg:
-            description
-
-    Returns:
-        return:
-            description
+    pseudocode:
+    -----------
+    - Initialize game variables
+    - Randomly choose first player
+    - Game logic:
+        - Player chooses piece
+        - Player chooses spot to play on
+        - Board is checked for a win
+            - If no winner, play continues with next player
     """
 
     args = get_args()  # only used for -h flag
