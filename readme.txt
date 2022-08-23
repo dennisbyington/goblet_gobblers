@@ -1,10 +1,3 @@
-# ---------------------------------------------------------------------------
-# Name of program: 
-
-goblet_gobblers.py
-
-
-# ---------------------------------------------------------------------------
 # Description 
 
 CLI implementation of the Goblet Gobblers board game 
@@ -17,12 +10,11 @@ Goblet Gobblers is a tic-tac-toe style board game where players can 'gobble' the
 Two players (X & O) begin with 6 pieces: 2 large, 2 medium, 2 small.
 
 Players take turn placing pieces on the board. Players may choose a piece not in play or one on the board
-already (although it is important to remember what has been 'gobbled' because uncovering an opposing player's
-piece makes it active. Once piece is picked up it must be played. Larger pieces may nest on top of smaller
-pieces only.  Play continues until someone wins.
+already - although it is important to remember what has been 'gobbled' because uncovering an opposing player's
+piece makes it active.  Once a piece is picked up it must be played - and it may not be placed back in the spot from which it was picked up.  Larger pieces may nest on top of smaller pieces only.  Play continues until someone wins.
 
 Note: If moving a piece exposes a winning sequence for the opponent, and if the destination for the move
-does not cover up one of the other pieces in the sequence, then the opponent wins—even if the move makes a
+does not cover up one of the other pieces in the sequence, then the opponent wins - even if the move makes a
 winning sequence for the moving player.
 
 A pdf of the board games rules can be found in this directory: goblet_gobblers_rules.pdf
@@ -70,9 +62,22 @@ dennisbyington@mac.com
 
 
 # ---------------------------------------------------------------------------
-# Version History
+# Version history & release notes
 
 0.1 - Initial release
+    - Leaving as CLI due to the future incorperation of ML algorithm (no need for a gui)
+
+
+# ---------------------------------------------------------------------------
+# Bugs
+
+- No known bugs.  However, I am seeking inputs and constructive criticism on areas I can improve. 
+
+
+# ---------------------------------------------------------------------------
+# Future features
+
+- Build an ML algorithm which can learn to play the game through reinforcement learning.   
 
 
 # ---------------------------------------------------------------------------
