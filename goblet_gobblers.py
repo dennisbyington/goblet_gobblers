@@ -5,37 +5,6 @@ Dennis Byington
 dennis.byington@mac.com
 25 Jun 2022
 CLI implementation of the Goblet Gobblers board game
-
-Game introduction:
-------------------
-Goblet Gobblers is a tic-tac-toe style board game where players can 'gobble' their opponents pieces.
-Two players (X & O) begin with 6 pieces: 2 large, 2 medium, 2 small.
-
-Players take turn placing pieces on the board. Players may choose a piece not in play or one on the board
-already (although it is important to remember what has been 'gobbled' because uncovering an opposing player's
-piece makes it active. Once piece is picked up it must be played. Larger pieces may nest on top of smaller
-pieces only.  Play continues until someone wins.
-
-Note: If moving a piece exposes a winning sequence for the opponent, and if the destination for the move
-does not cover up one of the other pieces in the sequence, then the opponent wins—even if the move makes a
-winning sequence for the moving player.
-
-A pdf of the board games rules can be found in this directory.
-Check here for additional rules: https://docs.racket-lang.org/games/gobblet.html
-
-Data structures:
-----------------------------
-    board: list of lists of strings.  Pieces are appended to list when played and popped from list when picked up.
-                                      [-1] of each spot is the piece on 'top'
-
-        board[1][-1] board[2][-1] board[3][-1]          'XXX' 'OOO' 'OO '
-        board[4][-1] board[5][-1] board[6][-1]   <==>   'XX ' ' X ' 'XX '
-        board[7][-1] board[8][-1] board[9][-1]          ' O ' 'OOO' ' X '
-
-    pieces: list of strings.  Represents the player's pieces.  Items 0-5 are X-pieces; 6-11 are O-pieces.
-                              (the extra spaces for display formatting)
-
-        ['XXX', 'XXX', 'XX ', 'XX ', ' X ', ' X ', 'OOO', 'OOO', 'OO ', 'OO ', ' O ', ' O ']
 """
 
 
@@ -61,28 +30,6 @@ def get_args():
 
     parser = argparse.ArgumentParser(description='CLI implementation of the Goblet Gobblers board game',
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-
-    # parser.add_argument('positional',  # name
-    #                     type=str,  # type
-    #                     metavar='str',  # help type
-    #                     help='A positional argument')  # help description
-    #
-    # parser.add_argument('-o', '--opt',  # flags (name)
-    #                     type=str,  # type
-    #                     choices=['choiceA', 'choiceB'],  # choices
-    #                     default=None,  # default
-    #                     help='An optional string argument',  # help description
-    #                     metavar='str')  # help type
-    #
-    # parser.add_argument('-f', '--file',  # flags (name)
-    #                     type=argparse.FileType('rt'),  # type
-    #                     default=None,  # default
-    #                     metavar='FILE',  # help name
-    #                     help='A readable file')  # help title
-    #
-    # parser.add_argument('-b', '--bool',  # flags (name)
-    #                     action='store_true',  # action (default = false)
-    #                     help='A boolean flag')  # help description
 
     return parser.parse_args()
 

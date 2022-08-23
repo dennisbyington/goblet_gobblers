@@ -1,60 +1,57 @@
 # ---------------------------------------------------------------------------
-# Name of program(s): 
+# Name of program: 
 
-aStar_main.py
+goblet_gobblers.py
 
-	# Helper files:
-		
-	aStar_args.py
-	aStar_getH.py
-	aStar_getPath.py
-	aStar_Node.py
-	aStar_printResults.py
-	aStar_search.py
 
 # ---------------------------------------------------------------------------
 # Description 
 
-A-Star Pathfinding (A*) implemented in python
-  
-  1) Parses command line arguments (if any)
-    - default values are 4-way moves with the Manhattan heuristic
-  
-  2) Creates a default grid with barriers
+CLI implementation of the Goblet Gobblers board game 
 
-  3) Performs A* on default grid with assigned allowed moves and heuristic
   
-  3) Displays result
+# ---------------------------------------------------------------------------
+# Game introduction:
+
+Goblet Gobblers is a tic-tac-toe style board game where players can 'gobble' their opponents pieces.
+Two players (X & O) begin with 6 pieces: 2 large, 2 medium, 2 small.
+
+Players take turn placing pieces on the board. Players may choose a piece not in play or one on the board
+already (although it is important to remember what has been 'gobbled' because uncovering an opposing player's
+piece makes it active. Once piece is picked up it must be played. Larger pieces may nest on top of smaller
+pieces only.  Play continues until someone wins.
+
+Note: If moving a piece exposes a winning sequence for the opponent, and if the destination for the move
+does not cover up one of the other pieces in the sequence, then the opponent wins—even if the move makes a
+winning sequence for the moving player.
+
+A pdf of the board games rules can be found in this directory: goblet_gobblers_rules.pdf
+
+Additional rules can be found here: https://docs.racket-lang.org/games/gobblet.html
+
+
+# ---------------------------------------------------------------------------
+Data structures:
+
+    - board: list of lists of strings.  Pieces are appended to list when played and popped from list when picked up.
+                                      [-1] of each spot is the piece on 'top'
+
+        board[1][-1] board[2][-1] board[3][-1]          'XXX' 'OOO' 'OO '
+        board[4][-1] board[5][-1] board[6][-1]   <==>   'XX ' ' X ' 'XX '
+        board[7][-1] board[8][-1] board[9][-1]          ' O ' 'OOO' ' X '
+
+
+    - pieces: list of strings.  Represents the player's pieces.  Items 0-5 are X-pieces; 6-11 are O-pieces.
+                              (the extra spaces for display formatting)
+
+        ['XXX', 'XXX', 'XX ', 'XX ', ' X ', ' X ', 'OOO', 'OOO', 'OO ', 'OO ', ' O ', ' O ']
     
 
 # ---------------------------------------------------------------------------
 # Dependencies
 
-- Python3 (shebang sets this)
-- Imports: argparse, numpy, and heapq libraries
-
-
-# ---------------------------------------------------------------------------
-# Installing
-
-Download all files to local folder
-
-
-# ---------------------------------------------------------------------------
-# Executing program
-
-Open an instance of your shell and navigate to folder where the files were saved:
-  - Invoke the A* program by calling: ./aStar_main.py
-  - The default [m] value is 4
-  - The default [H] value is 1 (Manhattan)
-    - You may override these by providing alternate values to the -m/--moves or -H/--Heuristic options 
-
-Note: 
-If you encounter a "Permission denied" error when attempting to execute the files, the execution permission was likely removed when transferring the file to/from canvas.  If this error is encountered, please add the execution permissions back to the file by invoking the following in your shell from within the same folder as the file is saved:
-	chmod +x aStar_main.py
-	
-
-Once the permission have been re-added, try to run the file again using the steps above.  
+- Python3 
+- Imports: argparse, random
 
 
 # ---------------------------------------------------------------------------
@@ -62,7 +59,7 @@ Once the permission have been re-added, try to run the file again using the step
   
 Help can be obtained by including the [-h] option to the program:
 
-  ./aStar_main.py -h
+  ./goblet_gobblers.py -h
 
 
 # ---------------------------------------------------------------------------
@@ -87,13 +84,7 @@ This software is licensed under the MIT License.  See license.txt for details.
 # ---------------------------------------------------------------------------
 # Acknowledgments
 
-The sites below were instrumental in helping me complete this project:
+This is my sofware recreation of a board game that is produced by Blue Orange Games.  
+Game created by Thierry Denoual.  Copyright 2002-2009 Blue Orange.  
 
-https://www.javatpoint.com/ai-informed-search-algorithms
-https://brilliant.org/wiki/a-star-search/
-https://www.baeldung.com/cs/dijkstra-time-complexity
-https://medium.com/@nicholas.w.swift/easy-a-star-pathfinding-7e6689c7f7b2
-https://towardsdatascience.com/a-star-a-search-algorithm-eb495fb156bb
-http://csis.pace.edu/~benjamin/teaching/cs627/webfiles/Astar.pdf
-https://tinypythonprojects.com
-https://www.redblobgames.com/pathfinding/
+
