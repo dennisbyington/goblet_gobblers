@@ -1,40 +1,4 @@
-#!/usr/bin/env python3
-
-"""
-Dennis Byington
-dennis.byington@mac.com
-25 Jun 2022
-CLI implementation of the Goblet Gobblers board game
-"""
-
-
-import argparse
-import random
-
-
-# --------------------------------------------------
-
-
-def get_args():
-    """Get command-line arguments
-
-    Parses and packages command line arguments into a argparse object based
-    on the flags & options initialized within this function.
-
-    In this instance, no options/flags are set except the default [-h] (help).
-
-    Returns:
-        parser.parse_args(): An argparse object with members that correlate to any
-        options/flags that are initialized in this function
-    """
-
-    parser = argparse.ArgumentParser(description='CLI implementation of the Goblet Gobblers board game',
-                                     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-
-    return parser.parse_args()
-
-
-# --------------------------------------------------
+"""CLI implementation of the Goblet Gobblers board game"""
 
 
 def display_board(board, pieces):
@@ -62,9 +26,6 @@ def display_board(board, pieces):
     print(f'| 10  | 11  | 12  | 13  |  14 |  15 |          | 16  | 17  | 18  | 19  |  20 |  21 |')
     print(f'-------------------------------------          -------------------------------------')
     print(f'')
-
-
-# --------------------------------------------------
 
 
 def pickup_piece_to_play(board, pieces, player):
@@ -143,9 +104,6 @@ def pickup_piece_to_play(board, pieces, player):
     return piece_to_play, piece_spot  # 'pickup' piece
 
 
-# --------------------------------------------------
-
-
 def play_piece(board, pieces, piece_to_play, piece_spot):
     """Player chooses where to play piece on board
 
@@ -202,9 +160,6 @@ def play_piece(board, pieces, piece_to_play, piece_spot):
         board[spot_to_play].append(piece_to_play)
 
         break  # have valid spot
-
-
-# --------------------------------------------------
 
 
 def check_win(board, player):
@@ -269,9 +224,6 @@ def check_win(board, player):
             return win, winner
 
 
-# --------------------------------------------------
-
-
 def test_check_win():
     """Test check_win() function.  See check_win() docstring for full functionality"""
 
@@ -334,63 +286,3 @@ def test_check_win():
     assert check_win([['buffer'], [' X '], ['XX '], ['XXX'],  # 2 row wins: opposing player is winner
                                   [' O '], ['OO '], [' O '],
                                   ['XX '], ['OO '], ['XXX']], 'X') == (True, 'O')
-
-
-# --------------------------------------------------
-
-
-def main():
-    """Main function
-
-    Initializes game variables and enters a forever loop where the game logic is located.  Stays here until
-    a winner is found.
-
-    pseudocode:
-    -----------
-    - Initialize game variables
-    - Randomly choose first player
-    - Game logic:
-        - Player chooses piece
-        - Player chooses spot to play on
-        - Board is checked for a win
-            - If no winner, play continues with next player
-    """
-
-    args = get_args()  # only used for -h flag
-
-    # initial game variables
-    pieces = ['XXX', 'XXX', 'XX ', 'XX ', ' X ', ' X ',  # extra spaces for display formatting
-              'OOO', 'OOO', 'OO ', 'OO ', ' O ', ' O ']
-    board = ['buffer', ['   '], ['   '], ['   '],
-                       ['   '], ['   '], ['   '],
-                       ['   '], ['   '], ['   ']]  # extra list for index buffer
-    player = random.choice('XO')  # rando chose player for first turn
-
-    display_board(board, pieces)
-
-    while True:
-        piece_to_play, piece_spot = pickup_piece_to_play(board, pieces, player)
-
-        display_board(board, pieces)
-
-        play_piece(board, pieces, piece_to_play, piece_spot)
-
-        display_board(board, pieces)
-
-        # check win/tie
-        win, winner = check_win(board, player)
-        if win:
-            print(f'Player-{winner} is the winner!')  # send message & break
-            break
-        else:  # change players and goto next turn
-            if player == 'X':
-                player = 'O'
-            else:
-                player = 'X'
-
-
-# --------------------------------------------------
-
-
-if __name__ == '__main__':
-    main()
