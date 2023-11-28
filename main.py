@@ -2,8 +2,11 @@
 
 import random
 from args import *
+from players import *
 from goblet_gobblers import *
 
+
+# todo : implement state-based goblet gobblers (check notes there)
 
 def main():
     """Main function
@@ -24,6 +27,14 @@ def main():
 
     args = get_args()  # only used for -h flag
 
+    # ----- goblet gobblers -----------------
+    # random.seed(0)
+    gg = GobletGobblers()
+    gg.play_game(random_player, random_player, verbose=True)  # random vs random
+    exit()  # note %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    # old code (non state based)
+    # ------------------------------------
     # initial game variables
     pieces = ['XXX', 'XXX', 'XX ', 'XX ', ' X ', ' X ',  # extra spaces for display formatting
               'OOO', 'OOO', 'OO ', 'OO ', ' O ', ' O ']
