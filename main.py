@@ -30,9 +30,16 @@ def main():
     # # ----- goblet gobblers -----------------
     random.seed(0)
     gg = GobletGobblers()
+
+    # random players only -----
     # utility = gg.play_game(random_player, random_player)  # random vs random
     # print(f"utility = {utility}")
-    gg.play_game(random_player, random_player, verbose=True)  # random vs random
+    # gg.play_game(random_player, random_player, verbose=True)  # random vs random
+
+    # human players -----
+    gg.play_game(human_player, random_player, verbose=True)  # human vs random
+    # gg.play_game(human_player, random_player, verbose=False)  # human vs random
+
 
 
     # # old code (non state based)

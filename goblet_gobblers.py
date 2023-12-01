@@ -6,28 +6,6 @@ from collections import namedtuple
 """
     ** Next milestone is to have args where you can select which type of player for X and O (human or random) **
         ** Then main will start a new game with those 2 players and display appropriate output **
-
-    Step 1 -> add random player 
-               
-            1) when only random players, can just show end result of game (with winner / utility) ................DONE
-                this will be the default GobletGobblers.play_game()
-            2) have verbose option that will show all intermediate moves and board results  ......................DONE
-                2a) refine verbose flow (need to clean up and maybe move verbose printing to sep function) .......DONE
-                        
-            Test) when running game with two random players I should get the output I would expect
-                    verbose = false -> only show end result ......................................................GOOD  
-                    verbose = true -> all desired output .........................................................GOOD
-    
-    ** COMMIT **
-    
-    Step 2 -> add human (query) player
-        
-            1) Will need separate play_game for when a human is involved -> play_game_with_human()
-               or can I do this through overriding play_game when a human player is passed in? 
-                    - Need to show board between pick and play of current piece
-                     - Check old gg for prompts during game play that I should add here: 
-                        "Player X, where do you want to play your piece XXX"?
-            2) May need to update human player logic in players.py
                    
     Step 3 -> update args.py 
             1) allow user to select which type of player(s)
@@ -38,11 +16,11 @@ from collections import namedtuple
     Step 4 -> Update license
             Add licensing/sourcing from aima for all code used (games, players, searches) in license.txt
             
-    Step 5 -> push to remote
-            Clean up aima code
-            Remove old code
-            Update comments & notes (also indicate that I am in the middle of a refactor and why I am refactoring)
+    Step 5 -> Clean up aima code
+              Remove old code
+              Update comments & notes (also indicate that I am in the middle of a refactor and why I am refactoring)
                 -> Moving to state based code to implement a learning algo?
+              Push 
 """
 
 """ 
@@ -199,9 +177,7 @@ class GobletGobblers:
     def display(self, state):
         """Print or otherwise display the state"""
 
-        # print('\033c', end="")  # clear terminal
-        # print(f'to_move: {state.to_move}')
-        # print(f'utility: {state.utility}')
+        print('\033c', end="")  # clear terminal
         print(f'')
         print(f'                                     |         |         ')
         print(f'                               {state.board[1][-1]}   |   {state.board[2][-1]}   |   {state.board[3][-1]}   ')
@@ -270,6 +246,7 @@ class GobletGobblers:
 
         state = self.initial                            # get initial state of the game
         while True:                                     # forever loop
+            self.display(state)                             # show board
             for player in players:                          # for each player in game
                 move = player(self, state)                  # get move to make
                 if verbose:
@@ -299,13 +276,13 @@ class GobletGobblers:
     def print_verbose(self, state, tag, move=None):
         """prints mid-game or final state information"""
         if tag == 'mid-game':
-            print(f"---- before move ----")
+            print(f"\n---- before move ----")
             print(f'utility: {state.utility}')
             print(f'to_move: {state.to_move}')
             print(f"move: {move}")
             self.display(state)
         if tag == 'final':
-            print(f"---- final state ----")
+            print(f"\n---- final state ----")
             print(f'utility: {state.utility}')
             print(f'to_move: {state.to_move}')
 
