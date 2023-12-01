@@ -2,41 +2,62 @@
 
 from collections import namedtuple
 
-# todo : current : move all this shit over to my old gg github repo
-#           only need human (query) and random players
-#   TO ADD HERE --> need to implement human player & human play (show board between moves)
-#               --> old gg has prompts during game play that I should add here "Player X, where do you want to play your piece XXX"?
-"""    
-FIXME: 
-- human player will need to see board between picking up and putting down piece 
-    - Will need to override play_game to account for updating board between picking & playing piece
-- play_game (Game base class) --> refine verbose flow (need to clean up and maybe move verbose printing to sep function)
-    "display_verbose_state(state) if verbose, else None"
+# todo : current : implement state-based code
 """
-# todo :
-#   TO ADD HERE --> Arg parse to allow user to select which type of player(s)
-#   TO ADD HERE --> add licensing/sourcing from aima for all code used (games, players, searches)
+    ** Next milestone is to have args where you can select which type of player for X and O (human or random) **
+        ** Then main will start a new game with those 2 players and display appropriate output **
 
+    Step 1 -> add random player 
+               
+            1) when only random players, can just show end result of game (with winner / utility) ................DONE
+                this will be the default GobletGobblers.play_game()
+            2) have verbose option that will show all intermediate moves and board results  ......................DONE
+                2a) refine verbose flow (need to clean up and maybe move verbose printing to sep function) .......DONE
+                        
+            Test) when running game with two random players I should get the output I would expect
+                    verbose = false -> only show end result ......................................................GOOD  
+                    verbose = true -> all desired output .........................................................GOOD
+    
+    ** COMMIT **
+    
+    Step 2 -> add human (query) player
+        
+            1) Will need separate play_game for when a human is involved -> play_game_with_human()
+               or can I do this through overriding play_game when a human player is passed in? 
+                    - Need to show board between pick and play of current piece
+                     - Check old gg for prompts during game play that I should add here: 
+                        "Player X, where do you want to play your piece XXX"?
+            2) May need to update human player logic in players.py
+                   
+    Step 3 -> update args.py 
+            1) allow user to select which type of player(s)
+                [-X -O] [1 2]
+                1: Random
+                2: Human/query
+        
+    Step 4 -> Update license
+            Add licensing/sourcing from aima for all code used (games, players, searches) in license.txt
+            
+    Step 5 -> push to remote
+            Clean up aima code
+            Remove old code
+            Update comments & notes (also indicate that I am in the middle of a refactor and why I am refactoring)
+                -> Moving to state based code to implement a learning algo?
+"""
 
 """ 
-# todo : next : trying to get minmax / a-b / mcst to work
+todo : next : trying to get minmax / a-b / mcst to work 
 
 Issue: Minmax & A-B recurses too deep (exceeds system limits) -> I think this is due to the depth of gg search tree
-
-TODO NEXT : Option A) Implement heuristic to allow for a-b pruning to cut off at a specified recursion depth (page 173 in aima)
-            Option B) Use MCST (if possible for deterministic games)
-            Option C) Use a neural net (possibly play against itself to learn?)
-
-
-
-            - I tried running gg via mcst but was getting errors, start debugging these once I have read up on mcst
-
+        
         TODO --> do math on how big gg minmax tree is (just curious)
 
-        TODO --> research monte carlo search (compare to alphabeta & minmax) - I think this is what is used when minmax grows too big
+        TODO NEXT : Option A) Implement heuristic to allow for a-b pruning to cut off at a specified recursion depth (page 173 in aima)
+                    Option B) Use MCST - if possible for deterministic games (tried this but was getting errors)
+                    Option C) Use a neural net (possibly play against itself to learn?)    
 """
 """
-# todo : misc/later 
+todo : misc/later 
 
     - play_game_dict() --> implemented   
 
@@ -46,8 +67,7 @@ TODO NEXT : Option A) Implement heuristic to allow for a-b pruning to cut off at
     - Change to this format for board later?  [None] * 9                                      
 """
 
-# state based code (based on AI: A Modern Approach)
-# -------------------------------------------------
+# state based code (based on AI: A Modern Approach) -----
 GobletGobblersGameState = namedtuple('GameState', 'to_move, utility, board, bank')
 
 
@@ -241,32 +261,25 @@ class GobletGobblers:
                 return -1 if player == 'X' else 1
 
     def play_game(self, *players, verbose=False):
-        """Play an n-person, move-alternating game."""
-        state = self.initial  # get initial state of the game
-        while True:  # forever loop
-            for player in players:  # for each player in game
-                move = player(self, state)  # get move to make
+        """Play an n-person, move-alternating game (only used for non-human players)
+           Returns utility for initial player
+
+            verbose = False: Final state: shows board (utility is returned)
+            verbose = True:  Each move: shows player to move, utility, move and board after move
+                             Final state: shows to move, utility, final board (utility is returned)"""
+
+        state = self.initial                            # get initial state of the game
+        while True:                                     # forever loop
+            for player in players:                          # for each player in game
+                move = player(self, state)                  # get move to make
                 if verbose:
-                    print(f'to_move: {state.to_move}')
-                    print(f'utility: {state.utility}')
-                    print("----------------")
-                    print(f"move: {move}")
-                    print("----------------")
-                state = self.result(state, move)  # get result of this move
-                if verbose:
-                    print(f"board after move:")
-                    self.display(state)
-                    print(f"")
-                if self.terminal_test(state):  # if result is a terminal state
+                    self.print_verbose(state, 'mid-game', move)
+                state = self.result(state, move)                # get result of this move
+                if self.terminal_test(state):                   # if result is a terminal state
                     if verbose:
-                        print(f"----- final state -----")
-                        print(f"-----------------------")
-                        print(f'to_move: {state.to_move}')
-                        print(f'utility: {state.utility}')
-                        print("----------------")
-                    self.display(state)  # display state
-                    return self.utility(state,
-                                        self.to_move(self.initial))  # return utility(state, initial player) --> 1 if x won, -1 if o won, 0 if tie
+                        self.print_verbose(state, 'final')
+                    self.display(state)                         # display state
+                    return self.utility(state, self.to_move(self.initial))  # return utility(state, initial player) --> 1 if x won, -1 if o won, 0 if tie
 
     def play_game_dict(self, players_and_strategies: dict, verbose=False):
         # note : (this is from jupyter notebook) : players_and_strategies => {player_name: strategy_function}
@@ -282,6 +295,19 @@ class GobletGobblers:
                 print(state)
         self.display(state)
         return state  # if here, have terminal state; return it
+
+    def print_verbose(self, state, tag, move=None):
+        """prints mid-game or final state information"""
+        if tag == 'mid-game':
+            print(f"---- before move ----")
+            print(f'utility: {state.utility}')
+            print(f'to_move: {state.to_move}')
+            print(f"move: {move}")
+            self.display(state)
+        if tag == 'final':
+            print(f"---- final state ----")
+            print(f'utility: {state.utility}')
+            print(f'to_move: {state.to_move}')
 
 
 def test_compute_utility():
@@ -352,8 +378,7 @@ def test_compute_utility():
                                    ['XX '], ['OO '], ['XXX']], 'X') == -1
 
 
-# old code (non state based)
-# --------------------------
+# old code (non-state based) ----------------------------
 def display_board(board, pieces):
     """Displays player's piece lists, piece names, and game board"""
 
