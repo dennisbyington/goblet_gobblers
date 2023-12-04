@@ -2,14 +2,14 @@ import random
 
 
 def random_player(game, state):
-    """returns a random move from all available moves"""
+    """Returns a random move from all available moves"""
     return random.choice(game.actions(state)) if game.actions(state) else None
 
 
 def human_player(game, state, verbose=False):
-    """prompts human player for move inputs - checks for valid move"""
+    """Prompts human player for move inputs - checks for valid move"""
 
-    game.display(state)  # display current board
+    game.display(state)
     if verbose:
         print(f'utility: {state.utility}')
         print(f'to_move: {state.to_move}')

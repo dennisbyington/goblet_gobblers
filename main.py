@@ -8,11 +8,17 @@ from goblet_gobblers import *
 def main():
     """Starts goblet gobblers game based on command line arg inputs"""
 
-    args = get_args()               # get args
-    random.seed(0)                  # seed random module
+    # get command line args
+    args = get_args()
 
-    gg = GobletGobblers()                               # create game instance
-    gg.play_game(args.X, args.O, verbose=args.verbose)  # start game
+    # seed random module
+    random.seed(0)
+
+    # create game instance
+    gg = GobletGobblers()
+
+    # start game
+    gg.play_game(args.X, args.O, verbose=args.verbose)
 
 
 # ------------------------
