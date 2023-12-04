@@ -1,33 +1,6 @@
 from collections import namedtuple
 from players import random_player
 
-# todo : current : implement state-based code
-"""                    
-    Step 5 ->   Update readme to markdown
-                Push 
-"""
-""" 
-todo : next : trying to get minmax / a-b / mcst to work 
-
-Issue: Minmax & A-B recurses too deep (exceeds system limits) -> I think this is due to the depth of gg search tree
-        
-        TODO --> do math on how big gg minmax tree is (just curious)
-
-        TODO NEXT : Option A) Implement heuristic to allow for a-b pruning to cut off at a specified recursion depth (page 173 in aima)
-                    Option B) Use MCST - if possible for deterministic games (tried this but was getting errors)
-                    Option C) Use a neural net (possibly play against itself to learn?)    
-"""
-"""
-todo : misc/later 
-
-    - play_game_dict() --> implemented   
-
-    - Change to this format for bank later?   [('X', 3), ('X', 3), ('X', 2), ('X', 2), ('X', 1), ('X', 1),
-                                             ('O', 3), ('O', 3), ('O', 2), ('O', 2), ('O', 1), ('O', 1)]
-
-    - Change to this format for board later?  [None] * 9                                      
-"""
-
 
 # game state
 GobletGobblersGameState = namedtuple('GameState', 'to_move, utility, board, bank')
@@ -267,20 +240,6 @@ class GobletGobblers:
                         self.print_verbose(state, 'final_state')
                     return self.utility(state, self.to_move(self.initial))
 
-    # def play_game_dict(self, players_and_strategies: dict, verbose=False):
-    #     # todo? : implement later
-    #     # note : (this is from jupyter notebook) : players_and_strategies => {player_name: strategy_function}
-    #     """Play an n-person, move-alternating game."""
-    #     state = self.initial  # get initial state of the game
-    #     while not self.terminal_test(state):  # while not in a terminal state
-    #         player = state.to_move  # get player to move
-    #         move = players_and_strategies[player](self, state)  # get move to make
-    #         state = self.result(state, move)  # get result of this move
-    #         if verbose:
-    #             print(f'Player: {player}, Move: {move}')
-    #             print(state)
-    #     self.display(state)
-    #     return state  # if here, have terminal state; return it
 
     def print_verbose(self, state, tag, move=None):
         """prints various mid-game & final state information"""
