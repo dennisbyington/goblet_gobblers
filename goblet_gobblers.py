@@ -1,18 +1,13 @@
 """CLI implementation of the Goblet Gobblers board game"""
 
 from collections import namedtuple
+from players import human_player, random_player
 
 # todo : current : implement state-based code
 """
     ** Next milestone is to have args where you can select which type of player for X and O (human or random) **
         ** Then main will start a new game with those 2 players and display appropriate output **
-                   
-    Step 3 -> update args.py 
-            1) allow user to select which type of player(s)
-                [-X -O] [1 2]
-                1: Random
-                2: Human/query
-        
+               
     Step 4 -> Update license
             Add licensing/sourcing from aima for all code used (games, players, searches) in license.txt
             
@@ -22,7 +17,6 @@ from collections import namedtuple
                 -> Moving to state based code to implement a learning algo?
               Push 
 """
-
 """ 
 todo : next : trying to get minmax / a-b / mcst to work 
 
@@ -177,7 +171,8 @@ class GobletGobblers:
     def display(self, state):
         """Print or otherwise display the state"""
 
-        print('\033c', end="")  # clear terminal
+        # print('\033c', end="")  # clear terminal
+        print(f"\n------------------------------------------------------------------------------------")
         print(f'')
         print(f'                                     |         |         ')
         print(f'                               {state.board[1][-1]}   |   {state.board[2][-1]}   |   {state.board[3][-1]}   ')
@@ -239,23 +234,24 @@ class GobletGobblers:
     def play_game(self, *players, verbose=False):
         """Play an n-person, move-alternating game (only used for non-human players)
            Returns utility for initial player
-
-            verbose = False: Final state: shows board (utility is returned)
-            verbose = True:  Each move: shows player to move, utility, move and board after move
-                             Final state: shows to move, utility, final board (utility is returned)"""
+           verbose controls various mid-game & final state display options"""
 
         state = self.initial                            # get initial state of the game
         while True:                                     # forever loop
-            self.display(state)                             # show board
             for player in players:                          # for each player in game
+
                 move = player(self, state)                  # get move to make
-                if verbose:
-                    self.print_verbose(state, 'mid-game', move)
+
+                if verbose and player == random_player:
+                    # if random & verbose, print mid-game state info
+                    self.print_verbose(state, 'random_mid_game', move)
+
                 state = self.result(state, move)                # get result of this move
+
                 if self.terminal_test(state):                   # if result is a terminal state
+                    self.display(state)                                     # display state
                     if verbose:
-                        self.print_verbose(state, 'final')
-                    self.display(state)                         # display state
+                        self.print_verbose(state, 'final_state')
                     return self.utility(state, self.to_move(self.initial))  # return utility(state, initial player) --> 1 if x won, -1 if o won, 0 if tie
 
     def play_game_dict(self, players_and_strategies: dict, verbose=False):
@@ -274,17 +270,19 @@ class GobletGobblers:
         return state  # if here, have terminal state; return it
 
     def print_verbose(self, state, tag, move=None):
-        """prints mid-game or final state information"""
-        if tag == 'mid-game':
-            print(f"\n---- before move ----")
+        """prints various mid-game & final state information"""
+
+        if tag == 'random_mid_game':
+            self.display(state)
             print(f'utility: {state.utility}')
             print(f'to_move: {state.to_move}')
             print(f"move: {move}")
-            self.display(state)
-        if tag == 'final':
-            print(f"\n---- final state ----")
+        if tag == 'final_state':
+            print(f"final state")
+            print(f"-----------")
             print(f'utility: {state.utility}')
             print(f'to_move: {state.to_move}')
+            print(f"------------------------------------------------------------------------------------\n")
 
 
 def test_compute_utility():

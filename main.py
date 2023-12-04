@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 
 import random
+import copy
 from args import *
 from players import *
 from goblet_gobblers import *
 
 
-# todo : implement state-based goblet gobblers (check notes there)
+# todo : implement state-based goblet gobblers (check notes in goblet_gobblers.py)
 
 def main():
     """Main function
@@ -25,21 +26,13 @@ def main():
             - If no winner, play continues with next player
     """
 
-    args = get_args()  # only used for -h flag
+    # new code (state based)
+    # ------------------------------------
+    args = get_args()               # get args
+    random.seed(0)                  # seed random module
 
-    # # ----- goblet gobblers -----------------
-    random.seed(0)
-    gg = GobletGobblers()
-
-    # random players only -----
-    # utility = gg.play_game(random_player, random_player)  # random vs random
-    # print(f"utility = {utility}")
-    # gg.play_game(random_player, random_player, verbose=True)  # random vs random
-
-    # human players -----
-    gg.play_game(human_player, random_player, verbose=True)  # human vs random
-    # gg.play_game(human_player, random_player, verbose=False)  # human vs random
-
+    gg = GobletGobblers()                               # create game instance
+    gg.play_game(args.X, args.O, verbose=args.verbose)  # start game
 
 
     # # old code (non state based)

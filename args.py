@@ -1,20 +1,40 @@
 import argparse
+import players
 
 
 def get_args():
-    """Get command-line arguments
-
-    Parses and packages command line arguments into a argparse object based
-    on the flags & options initialized within this function.
-
-    In this instance, no options/flags are set except the default [-h] (help).
-
-    Returns:
-        parser.parse_args(): An argparse object with members that correlate to any
-        options/flags that are initialized in this function
-    """
+    """Get command-line arguments"""
 
     parser = argparse.ArgumentParser(description='CLI implementation of the Goblet Gobblers board game',
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-    return parser.parse_args()
+    parser.add_argument('-X',                         # flag (player x)
+                        type=str,                     # type
+                        choices=['random', 'human'],  # choices
+                        default='random',             # default
+                        help='Player type for X',     # help description
+                        metavar='str')                # help type
+
+    parser.add_argument('-O',                         # flag (player o)
+                        type=str,                     # type
+                        choices=['random', 'human'],  # choices
+                        default='random',             # default
+                        help='Player type for X',     # help description
+                        metavar='str')                # help type
+
+    parser.add_argument('-v', '--verbose',                      # flag (verbose)
+                        action='store_true',                    # action (default = false)
+                        help='Print verbose game information')  # help description
+
+    args = parser.parse_args()
+
+    if args.X == 'random':                  # convert string into player functions
+        args.X = players.random_player
+    if args.X == 'human':
+        args.X = players.human_player
+    if args.O == 'random':
+        args.O = players.random_player
+    if args.O == 'human':
+        args.O = players.human_player
+
+    return args
