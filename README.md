@@ -1,9 +1,6 @@
 # Description
 
-CLI implementation of the Goblet Gobblers board game
-
-
-# Game introduction
+Python implementation of the Goblet Gobblers board game
 
 Goblet Gobblers is a tic-tac-toe style board game where players can 'gobble' their opponents pieces.
 Two players (X & O) begin with 6 pieces: 2 large, 2 medium, 2 small.
@@ -20,6 +17,24 @@ winning sequence for the moving player.
 A pdf of the board games rules can be found in this directory: goblet_gobblers_rules.pdf
 
 Additional rules can be found here: https://docs.racket-lang.org/games/gobblet.html
+
+# Usage
+
+Default play is 2 random players.  You may choose to make X or O a human player.  X always goes first (regardless if human or not).
+
+The final state is always shown and final state utility is always returned (int).
+
+Human players are shown the game state before each move.  May chose verbose to display state information at each move and also show board during random player moves
+
+
+    usage: main.py [-h] [-X str] [-O str] [-v]
+
+    options:
+      -h, --help     show this help message and exit
+      -X str         Player type for X: "human" or "random" (default: random)
+      -O str         Player type for O: "human" or "random" (default: random)
+      -v, --verbose  Print verbose game information (default: False)
+
 
 
 # Data structures
@@ -79,7 +94,7 @@ Incorporate an ML algorithm which can learn to play the game.
 
 # License
 
-This software is licensed under the MIT License.  See license.txt for details.
+This software is licensed under the MIT License.  See LICENSE.txt for details.
 
 
 # Acknowledgments
