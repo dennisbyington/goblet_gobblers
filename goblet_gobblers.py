@@ -240,7 +240,6 @@ class GobletGobblers:
                         self.print_verbose(state, 'final_state')
                     return self.utility(state, self.to_move(self.initial))
 
-
     def print_verbose(self, state, tag, move=None):
         """prints various mid-game & final state information"""
 
@@ -255,3 +254,62 @@ class GobletGobblers:
             print(f'utility: {state.utility}')
             print(f'to_move: {state.to_move}')
             print(f"------------------------------------------------------------------------------------\n")
+
+    def heuristic(self, state, player):
+        """
+        state: game state we need a heuristic for
+        player: player that we want the heuristic for (this is not state.to_move because "state" is after player has made their move)
+
+        Overall heuristic concept:
+            1) Board Control and Piece Hierarchy
+                - Assign values to each (top) piece based on size (Larger pieces have higher values)
+                    - Add points for our piece on top, subtract for opponent's piece on top
+                    - Extra points if we have gobbled an opponent's smaller piece
+
+            2) Piece Mobility
+                - Pieces with more moves available get a higher score (more moves available = higher score)
+
+            3) Threats and Opportunities
+                - Add significant points for moves that lead to a win
+                - Subtract significant points for moves that lead to a loss
+
+        Need to experiment with points:
+            piece size points:                      1:1   2:3   3:5
+            points for covering opponent's piece:   2
+            points available for each move:         1
+            moves leading to win:                   100
+            moves leading to loss:                 -100
+        """
+
+        # note : this code pseudocode - need to implement
+
+        score = 0
+        piece_values = {1: 1, 2: 3, 3: 5}  # Example values for small, medium, large pieces
+
+        # Board Control and Piece Hierarchy
+        for row in state.board:
+            for cell in row:
+                # add points if we have top piece
+                if cell.belongsTo(player):              # todo : need to implement
+                    score += piece_values[cell.size]
+                    # additional points for covering opponent's piece
+                    if cell.isCovering(player):         # todo : need to implement
+                        score += 2
+                # subtract points if opponent has top piece
+                elif cell.isOccupied(player):           # todo : need to implement
+                    score -= piece_values[cell.size]
+
+        # Piece Mobility
+        for piece in player.pieces:                     # todo : need to implement
+            # More moves = higher score
+            score += len(piece.availableMoves())        # todo : need to implement
+
+        # Threats and Opportunities
+        # wins score alot
+        if player.canWinNextMove():                     # todo : need to implement  (maybe use state.utility * 100 ??? )
+            score += 100
+        # losses score negatively
+        if opponent(player).canWinNextMove():           # todo : need to implement  (maybe use state.utility * 100 ??? )
+            score -= 100
+
+        return score
