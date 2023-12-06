@@ -1,4 +1,10 @@
+"""Games or Adversarial Search (Chapter 5)"""
+# todo : add source credits in comments here & readme
+
+
 import random
+from searches import minmax_decision, alpha_beta_search, alpha_beta_cutoff_search
+
 
 
 def random_player(game, state):
@@ -33,3 +39,17 @@ def human_player(game, state, verbose=False):
         else:
             print("\n** Invalid Move ** Try Again ** \n")
             continue
+
+
+# note: for reference (REMOVE LATER)
+def minmax_player(game, state):
+    return minmax_decision(state, game)
+
+
+# note: for reference (REMOVE LATER)
+def alpha_beta_player(game, state):
+    return alpha_beta_search(state, game)
+
+
+def alpha_beta_cutoff_player(game, state):
+    return alpha_beta_cutoff_search(state, game)
