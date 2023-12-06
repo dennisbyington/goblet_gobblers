@@ -135,8 +135,8 @@ class GobletGobblers:
 
         return new_state
 
-    def utility(self, state, player):
-        """Return the utility to *this* player (could be X or O); 1 for win, -1 for loss, 0 otherwise"""
+    def min_max_value(self, state, player):
+        """Return the min-max value to *this* player (could be X or O); 1 for win, -1 for loss, 0 otherwise"""
         return state.utility if player == 'X' else -state.utility
 
     def terminal_test(self, state):
@@ -215,7 +215,7 @@ class GobletGobblers:
                 return -1 if player == 'X' else 1
 
     def play_game(self, *players, verbose=False):
-        """Play an n-person, move-alternating game.  Returns utility for initial player"""
+        """Play an n-person, move-alternating game.  Returns final state utility"""
 
         # get initial state of the game
         state = self.initial
@@ -238,7 +238,7 @@ class GobletGobblers:
                     self.display(state)
                     if verbose:
                         self.print_verbose(state, 'final_state')
-                    return self.utility(state, self.to_move(self.initial))
+                    return state.utility
 
     def print_verbose(self, state, tag, move=None):
         """prints various mid-game & final state information"""
@@ -258,7 +258,14 @@ class GobletGobblers:
     def heuristic(self, state, player):
         """
         state: game state we need a heuristic for
-        player: player that we want the heuristic for (this is not state.to_move because "state" is after player has made their move)
+        player: player that made move that got us into "state"
+                we want the heuristic for player (this is not state.to_move because "state" is after player has made their move)
+
+        High positive values indicate favorable positions for "player", while low or negative values indicate unfavorable positions
+
+        calculate normally: + if player has good positions
+                            - if player has bad positions
+                            return as is (do not negate or modify)
 
         Overall heuristic concept:
             1) Board Control and Piece Hierarchy
@@ -282,6 +289,10 @@ class GobletGobblers:
         """
 
         # note : this code pseudocode - need to implement
+        # todo: build simple test case in main (for now) --> build full test suite in tests.py later
+
+        print("*** implement me ***")
+        exit()
 
         score = 0
         piece_values = {1: 1, 2: 3, 3: 5}  # Example values for small, medium, large pieces
@@ -290,26 +301,26 @@ class GobletGobblers:
         for row in state.board:
             for cell in row:
                 # add points if we have top piece
-                if cell.belongsTo(player):              # todo : need to implement
+                if cell.belongsTo(player):                              # todo : need to implement
                     score += piece_values[cell.size]
                     # additional points for covering opponent's piece
-                    if cell.isCovering(player):         # todo : need to implement
+                    if cell.isCovering(player, state.to_move):          # todo : need to implement
                         score += 2
                 # subtract points if opponent has top piece
                 elif cell.isOccupied(player):           # todo : need to implement
                     score -= piece_values[cell.size]
 
         # Piece Mobility
-        for piece in player.pieces:                     # todo : need to implement
+        for piece in player.pieces:                     # todo : need to implement (use game.actions -> and check action[0] to see if it belongs to player)
             # More moves = higher score
             score += len(piece.availableMoves())        # todo : need to implement
 
         # Threats and Opportunities
         # wins score alot
-        if player.canWinNextMove():                     # todo : need to implement  (maybe use state.utility * 100 ??? )
+        if player.canWinNextMove():                     # todo : need to implement  (maybe use state.min_max_value * 100 ??? )
             score += 100
         # losses score negatively
-        if opponent(player).canWinNextMove():           # todo : need to implement  (maybe use state.utility * 100 ??? )
+        if state.to_move.canWinNextMove():              # todo : need to implement  (maybe use state.min_max_value * 100 ??? )
             score -= 100
 
         return score
