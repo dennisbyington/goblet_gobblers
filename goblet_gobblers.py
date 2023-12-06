@@ -281,7 +281,7 @@ class GobletGobblers:
                 - Subtract significant points for moves that lead to a loss
 
         Need to experiment with points:
-            piece size points:                      1:1   2:3   3:5
+            piece size points:                      2x size  (maybe could use --> 1:1   2:3   3:5)
             points for covering opponent's piece:   2
             points available for each move:         1
             moves leading to win:                   100
@@ -289,38 +289,57 @@ class GobletGobblers:
         """
 
         # note : this code pseudocode - need to implement
-        # todo: build simple test case in main (for now) --> build full test suite in tests.py later
 
-        print("*** implement me ***")
-        exit()
+        def player_on_top(spot, player):
+            return 2 * spot[-1].count(player)
+
+        def opponent_on_top(spot, opponent):
+            return -2 * spot[-1].count(opponent)
+
+        def covering_opponents_piece(spot, player, opponent):
+            # 1 piece or less on spot
+            if len(spot) < 2:
+                return 0
+            # player on top, opponent below
+            elif spot[-1].count(player) > 0 and spot[-2].count(opponent) > 0:
+                return 2
+            # all others
+            else:
+                return 0
+
 
         score = 0
-        piece_values = {1: 1, 2: 3, 3: 5}  # Example values for small, medium, large pieces
 
+        # --------------------------------
         # Board Control and Piece Hierarchy
-        for row in state.board:
-            for cell in row:
-                # add points if we have top piece
-                if cell.belongsTo(player):                              # todo : need to implement
-                    score += piece_values[cell.size]
-                    # additional points for covering opponent's piece
-                    if cell.isCovering(player, state.to_move):          # todo : need to implement
-                        score += 2
-                # subtract points if opponent has top piece
-                elif cell.isOccupied(player):           # todo : need to implement
-                    score -= piece_values[cell.size]
+        for spot in state.board:
+            # add points if we have top piece (points = 2 * piece size)
+            score += player_on_top(spot, player)
+            # additional points for covering opponent's piece (2 points)
+            score += covering_opponents_piece(spot, player, state.to_move)
+            # # subtract points if opponent has top piece (points = -2 * piece size)
+            score += opponent_on_top(spot, state.to_move)
+        # --------------------------------
 
-        # Piece Mobility
-        for piece in player.pieces:                     # todo : need to implement (use game.actions -> and check action[0] to see if it belongs to player)
-            # More moves = higher score
-            score += len(piece.availableMoves())        # todo : need to implement
 
-        # Threats and Opportunities
-        # wins score alot
-        if player.canWinNextMove():                     # todo : need to implement  (maybe use state.min_max_value * 100 ??? )
-            score += 100
-        # losses score negatively
-        if state.to_move.canWinNextMove():              # todo : need to implement  (maybe use state.min_max_value * 100 ??? )
-            score -= 100
+        # --------------------------------
+        # # Piece Mobility
+        # for piece in player.pieces:                     # todo : need to implement (use game.actions -> and check action[0] to see if it belongs to player)
+        #     # More moves = higher score
+        #     score += len(piece.availableMoves())        # todo : need to implement
+        # --------------------------------
 
+
+        # --------------------------------
+        # # Threats and Opportunities
+        # # wins score alot
+        # if player.canWinNextMove():                     # todo : need to implement  (maybe use state.min_max_value * 100 ??? )
+        #     score += 100
+        # # losses score negatively
+        # if state.to_move.canWinNextMove():              # todo : need to implement  (maybe use state.min_max_value * 100 ??? )
+        #     score -= 100
+        # --------------------------------
+
+
+        print(f"score: {score}")  # note ************
         return score
