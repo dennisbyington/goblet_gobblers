@@ -274,7 +274,8 @@ class GobletGobblers:
                     - Extra points if we have gobbled an opponent's smaller piece
 
             2) Piece Mobility
-                - Pieces with more moves available get a higher score (more moves available = higher score)
+                - Player pieces with more moves available get a higher score (more moves available = higher score)
+                - Opponent pieces with more moves available get a lower score (more moves available = lower score)
 
             3) Threats and Opportunities
                 - Add significant points for moves that lead to a win
@@ -283,12 +284,10 @@ class GobletGobblers:
         Need to experiment with points:
             piece size points:                      2x size  (maybe could use --> 1:1   2:3   3:5)
             points for covering opponent's piece:   2
-            points available for each move:         1
+            points available for each move:         +1 for player, -1 for opponent
             moves leading to win:                   100
             moves leading to loss:                 -100
         """
-
-        # note : this code pseudocode - need to implement
 
         def player_on_top(spot, player):
             return 2 * spot[-1].count(player)
@@ -310,8 +309,7 @@ class GobletGobblers:
 
         score = 0
 
-        # --------------------------------
-        # Board Control and Piece Hierarchy
+        # Board Control and Piece Hierarchy -----
         for spot in state.board:
             # add points if we have top piece (points = 2 * piece size)
             score += player_on_top(spot, player)
@@ -319,27 +317,25 @@ class GobletGobblers:
             score += covering_opponents_piece(spot, player, state.to_move)
             # # subtract points if opponent has top piece (points = -2 * piece size)
             score += opponent_on_top(spot, state.to_move)
-        # --------------------------------
+        print(f"board control: : {score}")
 
 
-        # --------------------------------
-        # # Piece Mobility
-        # for piece in player.pieces:                     # todo : need to implement (use game.actions -> and check action[0] to see if it belongs to player)
-        #     # More moves = higher score
-        #     score += len(piece.availableMoves())        # todo : need to implement
-        # --------------------------------
+        # Piece Mobility -----
+        # add points for each move player has available
+        score += len(self.actions(GobletGobblersGameState(player, 0, state.board, state.bank)))  # using temp state because current state has opponent as to_move, so game.actions returns moves for opponent
+        print(f"player available move: {len(self.actions(GobletGobblersGameState(player, 0, state.board, state.bank)))}")
+        # subtract points for each move opponent has available
+        score -= len(self.actions(state))
+        print(f"opponent available move: -{len(self.actions(state))}")
 
 
-        # --------------------------------
-        # # Threats and Opportunities
-        # # wins score alot
-        # if player.canWinNextMove():                     # todo : need to implement  (maybe use state.min_max_value * 100 ??? )
-        #     score += 100
-        # # losses score negatively
-        # if state.to_move.canWinNextMove():              # todo : need to implement  (maybe use state.min_max_value * 100 ??? )
-        #     score -= 100
-        # --------------------------------
+        # # Threats and Opportunities -----
+        # wins score large positive, losses score large negative
+        score += 100 * self.min_max_value(state, player)     # min_max_value = 1 if player has won; -1 if opponent has won
+        print(f"min_max_val: {100 * self.min_max_value(state, player)}")
 
 
-        print(f"score: {score}")  # note ************
+        print(f"final score: {score}")
+
+
         return score
