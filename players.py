@@ -1,10 +1,7 @@
-"""Games or Adversarial Search (Chapter 5)"""
-# todo : add source credits in comments here & readme
-
+"""Players for games.  Based on the textbook "Artificial Intelligence: A Modern Approach (Chapter 5 - Adversarial Search)"""
 
 import random
-from searches import minmax_decision, alpha_beta_search, alpha_beta_cutoff_search
-
+from searches import alpha_beta_cutoff_search
 
 
 def random_player(game, state):
@@ -41,15 +38,6 @@ def human_player(game, state, verbose=False):
             continue
 
 
-# note: for reference (REMOVE LATER)
-def minmax_player(game, state):
-    return minmax_decision(state, game)
-
-
-# note: for reference (REMOVE LATER)
-def alpha_beta_player(game, state):
-    return alpha_beta_search(state, game)
-
-
 def alpha_beta_cutoff_player(game, state):
+    """Returns a move obtained from alpha-beta search"""
     return alpha_beta_cutoff_search(state, game, eval_fn=game.heuristic)

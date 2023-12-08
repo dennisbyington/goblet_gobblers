@@ -257,7 +257,7 @@ class GobletGobblers:
             print(f"------------------------------------------------------------------------------------\n")
 
     def heuristic(self, state, player):
-        """ Computes heuristic of state
+        """ Computes heuristic of state (use in alpha-beta cutoff search)
 
         High positive values indicate favorable positions for "player", while low or negative values indicate unfavorable positions for "player"
 

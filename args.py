@@ -12,14 +12,14 @@ def get_args():
                         type=str,                     # type
                         choices=['random', 'human', 'alpha-beta'],  # choices
                         default='random',             # default
-                        help='Player type for X: "human" or "random"',     # help description
+                        help='Player type for X: "random, ""human", or "alpha-beta"',     # help description
                         metavar='str')                # help type
 
     parser.add_argument('-O',                         # flag (player o)
                         type=str,                     # type
                         choices=['random', 'human', 'alpha-beta'],  # choices
                         default='random',             # default
-                        help='Player type for O: "human" or "random"',     # help description
+                        help='Player type for X: "random, ""human", or "alpha-beta"',     # help description
                         metavar='str')                # help type
 
     parser.add_argument('-v', '--verbose',                      # flag (verbose)
