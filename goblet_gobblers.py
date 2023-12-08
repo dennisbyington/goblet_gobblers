@@ -1,3 +1,4 @@
+import copy
 from collections import namedtuple
 from players import random_player
 
@@ -105,8 +106,8 @@ class GobletGobblers:
         # get local variables
         from_spot = move[0]
         to_spot = move[1]
-        board = state.board.copy()
-        bank = state.bank.copy()
+        board = copy.deepcopy(state.board)
+        bank = copy.deepcopy(state.bank)
 
         # set piece_to_play & remove it from board or bank (aka: pickup)
         # piece on board
