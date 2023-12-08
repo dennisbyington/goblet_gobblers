@@ -256,16 +256,14 @@ class GobletGobblers:
             print(f"------------------------------------------------------------------------------------\n")
 
     def heuristic(self, state, player):
-        """
+        """ Computes heuristic of state
+
+        High positive values indicate favorable positions for "player", while low or negative values indicate unfavorable positions for "player"
+
         state: game state we need a heuristic for
         player: player that made move that got us into "state"
                 we want the heuristic for player (this is not state.to_move because "state" is after player has made their move)
 
-        High positive values indicate favorable positions for "player", while low or negative values indicate unfavorable positions
-
-        calculate normally: + if player has good positions
-                            - if player has bad positions
-                            return as is (do not negate or modify)
 
         Overall heuristic concept:
             1) Board Control and Piece Hierarchy
@@ -281,7 +279,8 @@ class GobletGobblers:
                 - Add significant points for moves that lead to a win
                 - Subtract significant points for moves that lead to a loss
 
-        Need to experiment with points:
+
+        Can experiment with points:
             piece size points:                      2x size  (maybe could use --> 1:1   2:3   3:5)
             points for covering opponent's piece:   2
             points available for each move:         +1 for player, -1 for opponent
@@ -290,22 +289,24 @@ class GobletGobblers:
         """
 
         def player_on_top(spot, player):
+            """if player has top piece (points = 2 * piece size)"""
             return 2 * spot[-1].count(player)
 
         def opponent_on_top(spot, opponent):
+            """if opponent has top piece (points = -2 * piece size)"""
             return -2 * spot[-1].count(opponent)
 
         def covering_opponents_piece(spot, player, opponent):
-            # 1 piece or less on spot
+            """if player piece covering opponent piece (2 points)"""
+            # 1 piece or less on spot (spot always has buffer ('   ') piece)
             if len(spot) < 2:
                 return 0
-            # player on top, opponent below
+            # player on top, covering opponent below (2 points)
             elif spot[-1].count(player) > 0 and spot[-2].count(opponent) > 0:
                 return 2
             # all others
             else:
                 return 0
-
 
         score = 0
 
@@ -315,27 +316,17 @@ class GobletGobblers:
             score += player_on_top(spot, player)
             # additional points for covering opponent's piece (2 points)
             score += covering_opponents_piece(spot, player, state.to_move)
-            # # subtract points if opponent has top piece (points = -2 * piece size)
+            # subtract points if opponent has top piece (points = -2 * piece size)
             score += opponent_on_top(spot, state.to_move)
-        print(f"board control: : {score}")
-
 
         # Piece Mobility -----
         # add points for each move player has available
         score += len(self.actions(GobletGobblersGameState(player, 0, state.board, state.bank)))  # using temp state because current state has opponent as to_move, so game.actions returns moves for opponent
-        print(f"player available move: {len(self.actions(GobletGobblersGameState(player, 0, state.board, state.bank)))}")
         # subtract points for each move opponent has available
         score -= len(self.actions(state))
-        print(f"opponent available move: -{len(self.actions(state))}")
 
-
-        # # Threats and Opportunities -----
+        # Threats and Opportunities -----
         # wins score large positive, losses score large negative
         score += 100 * self.min_max_value(state, player)     # min_max_value = 1 if player has won; -1 if opponent has won
-        print(f"min_max_val: {100 * self.min_max_value(state, player)}")
-
-
-        print(f"final score: {score}")
-
 
         return score
