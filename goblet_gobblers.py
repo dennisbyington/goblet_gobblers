@@ -281,21 +281,27 @@ class GobletGobblers:
                 - Subtract significant points for moves that lead to a loss
 
 
-        Can experiment with points:
-            piece size points:                      2x size  (maybe could use --> 1:1   2:3   3:5)
-            points for covering opponent's piece:   2
+        Point distribution:
+            piece size points:                      10x size
+            points for covering opponent's piece:   5
             points available for each move:         +1 for player, -1 for opponent
-            moves leading to win:                   100
-            moves leading to loss:                 -100
+            moves leading to win:                   1000
+            moves leading to loss:                 -1000
+
+
+        Possible additions:
+            - Identify immediate win or block opportunities, and assign high scores to prevent or achieve these
+                - Unblockable Win: player has two possible moves to win and opponent can only block one.
+                - Prevent opponent win: Opponent has 2 in a row with 3rd spot open (and/or their big piece available to gobble)
         """
 
         def player_on_top(spot, player):
             """if player has top piece (points = 2 * piece size)"""
-            return 2 * spot[-1].count(player)
+            return 10 * spot[-1].count(player)
 
         def opponent_on_top(spot, opponent):
             """if opponent has top piece (points = -2 * piece size)"""
-            return -2 * spot[-1].count(opponent)
+            return -10 * spot[-1].count(opponent)
 
         def covering_opponents_piece(spot, player, opponent):
             """if player piece covering opponent piece (2 points)"""
@@ -304,7 +310,7 @@ class GobletGobblers:
                 return 0
             # player on top, covering opponent below (2 points)
             elif spot[-1].count(player) > 0 and spot[-2].count(opponent) > 0:
-                return 2
+                return 5
             # all others
             else:
                 return 0
@@ -328,6 +334,6 @@ class GobletGobblers:
 
         # Threats and Opportunities -----
         # wins score large positive, losses score large negative
-        score += 100 * self.min_max_value(state, player)     # min_max_value = 1 if player has won; -1 if opponent has won
+        score += 1000 * self.min_max_value(state, player)  # min_max_value = 1 if player has won; -1 if opponent has won
 
         return score
