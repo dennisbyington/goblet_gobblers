@@ -12,13 +12,13 @@ def main():
     args = get_args()
 
     # seed random module
-    random.seed(0)
+    random.seed(args.r)
 
     # create game instance
     gg = GobletGobblers()
 
     # start game
-    gg.play_game(args.X, args.O, verbose=args.verbose)
+    gg.play_game(args.X, args.O, verbose=args.v)
 
 
 # ------------------------

@@ -22,7 +22,13 @@ def get_args():
                         help='Player type for X: "random, ""human", or "alpha-beta"',     # help description
                         metavar='str')                # help type
 
-    parser.add_argument('-v', '--verbose',                      # flag (verbose)
+    parser.add_argument('-r',                           # flag (random seed)
+                        type=int,                       # type
+                        default=None,                   # default
+                        help='Seed for random module',  # help description
+                        metavar='int')                  # help type
+
+    parser.add_argument('-v',                                   # flag (verbose)
                         action='store_true',                    # action (default = false)
                         help='Print verbose game information')  # help description
 
