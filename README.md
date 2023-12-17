@@ -94,9 +94,11 @@ No known bugs.  However, I am seeking inputs and constructive criticism on areas
 
 # Future features
 
-- Tune Min-Max alpha-beta heuristic parameters
 - Train a neural net to play the game
-
+- Remove buffer from board
+- Implement play_game_dict()
+- Change piece format: ('X', 3)
+- Change board format: \[None] * 9
 
 # License
 
