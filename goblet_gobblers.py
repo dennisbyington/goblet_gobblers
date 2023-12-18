@@ -224,7 +224,10 @@ class GobletGobblers:
         while True:
             # for each player in game
             for player in players:
-
+                # print(state.board)
+                # print(state.bank)
+                # print(state.to_move)
+                self.display(state)
                 # get move to make
                 move = player(self, state)
 
@@ -337,3 +340,83 @@ class GobletGobblers:
         score += 1000 * self.min_max_value(state, player)  # min_max_value = 1 if player has won; -1 if opponent has won
 
         return score
+
+    def vector_encoding(self, state):
+        """Encodes state into a vector (for use as input into a neural net)
+
+            vector = [board, bank, to move]
+
+        1) Board encoding:
+            Each spot will be represented by a vector of length 4 (3 possible pieces + empty spot)
+            Encoding sequence is spots (top left - bottom right) and pieces (top piece - bottom (empty) piece)
+            Each piece is encoded according to the table below
+
+            Ex final vector:
+
+                [3      5       0       0       6       2       4       0       6       0       0       0  ... 0]
+                 ^                              ^                               ^
+                 spot 1                         spot 2                          spot 3
+                 1t     1m      1b      1e      2t      2m      2b      2e      3t      3m      3b      3e ... 9e
+                 (t = top, m = middle, b = bottom, e = empty)
+
+            Conversion table:
+                                piece       num     (#x, #o)
+            -----------------------------------------------
+            Empty Spot          '   '       0       (0, 0)
+            Small Piece (X)     ' X '       1       (1, 0)
+            Medium Piece (X)    'XX '       2       (2, 0)
+            Large Piece (X)     'XXX'       3       (3, 0)
+            Small Piece (O)     ' O '       4       (0, 1)
+            Medium Piece (O)    'OO '       5       (0, 2)
+            Large Piece (O)     'OOO'       6       (0, 3)
+
+
+        2) Bank Encoding
+            The availability of each piece in the bank is also encoded using the same method
+
+
+        3) Current Player Encoding
+        The current player (to move) will be encoded in a similar manner
+
+            state.to_move == 'X': 0
+            state.to_move == 'O': 1
+
+        The complete encoded vector for a game state consists of: [board, bank, to_move]
+
+             board                                    bank                   to move
+            [3, 5, 0, 0, 6, 2, 4, 0, 6, 0, 0, 0, ..., 3, 0, 2, 0, 1, 1, ..., 0]
+        """
+
+        piece_conversions = {(0, 0): 0,     # (x-count, o-count)
+                             (1, 0): 1,
+                             (2, 0): 2,
+                             (3, 0): 3,
+                             (0, 1): 4,
+                             (0, 2): 5,
+                             (0, 3): 6}
+
+        encoded_vector = []
+
+        # loop through board spots
+        for spot in state.board:
+            # skip buffer spot
+            if spot == 'buffer':
+                continue
+            # reverse to get list in order (left-right == top-bottom)
+            spot.reverse()
+            # if spot < length 4: pad with empty pieces
+            while len(spot) < 4:
+                spot.append('   ')
+            # get piece conversion and append to vector
+            for piece in spot:
+                encoded_vector.append(piece_conversions[(piece.count('X'), piece.count('O'))])
+        # loop through bank pieces
+        for piece in state.bank:
+            # get piece conversion and append to vector
+            encoded_vector.append(piece_conversions[(piece.count('X'), piece.count('O'))])
+
+        # append player conversion to vector
+        encoded_vector.append(0) if state.to_move == 'X' else encoded_vector.append(1)
+
+        # print(flat_vector)
+        return encoded_vector

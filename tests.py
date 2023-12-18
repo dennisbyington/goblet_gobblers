@@ -461,62 +461,122 @@ def test_compute_utility():
 
     gg = GobletGobblers()
 
-    assert gg.new_compute_utility([['buffer'], ['   '], ['   '], ['   '],  # blank board: no win
+    assert gg.compute_utility([['buffer'], ['   '], ['   '], ['   '],  # blank board: no win
                                                ['   '], ['   '], ['   '],
                                                ['   '], ['   '], ['   ']], 'X') == 0
 
-    assert gg.new_compute_utility([['buffer'], [' X '], ['XX '], ['OOO'],  # random board: no win
+    assert gg.compute_utility([['buffer'], [' X '], ['XX '], ['OOO'],  # random board: no win
                                                [' O '], ['OO '], [' X '],
                                                ['XX '], ['XXX'], ['OOO']], 'X') == 0
 
-    assert gg.new_compute_utility([['buffer'], [' X '], ['XX '], ['XXX'],  # current player -> row #1 winner
+    assert gg.compute_utility([['buffer'], [' X '], ['XX '], ['XXX'],  # current player -> row #1 winner
                                                [' O '], ['OO '], [' X '],
                                                ['XX '], ['XXX'], ['OOO']], 'X') == 1
 
-    assert gg.new_compute_utility([['buffer'], [' O '], ['XX '], [' O '],  # current player -> row #3 winner
+    assert gg.compute_utility([['buffer'], [' O '], ['XX '], [' O '],  # current player -> row #3 winner
                                                ['OO '], ['OO '], [' X '],
                                                ['XX '], ['XXX'], [' X ']], 'X') == 1
 
-    assert gg.new_compute_utility([['buffer'], [' X '], ['XX '], ['OOO'],  # opposing player -> row #2 winner
+    assert gg.compute_utility([['buffer'], [' X '], ['XX '], ['OOO'],  # opposing player -> row #2 winner
                                                [' O '], ['OO '], [' O '],
                                                ['XX '], ['OO '], ['XXX']], 'X') == -1
 
-    assert gg.new_compute_utility([['buffer'], [' X '], ['XX '], ['XXX'],  # current player -> col #1 winner
+    assert gg.compute_utility([['buffer'], [' X '], ['XX '], ['XXX'],  # current player -> col #1 winner
                                                [' X '], ['OO '], [' O '],
                                                ['XX '], ['XXX'], ['OOO']], 'X') == 1
 
-    assert gg.new_compute_utility([['buffer'], [' O '], ['XX '], ['XXX'],  # current player -> col #3 winner
+    assert gg.compute_utility([['buffer'], [' O '], ['XX '], ['XXX'],  # current player -> col #3 winner
                                                [' O '], ['OO '], [' X '],
                                                ['XX '], ['OO '], ['XXX']], 'X') == 1
 
-    assert gg.new_compute_utility([['buffer'], [' X '], ['OOO'], ['OOO'],  # opposing player -> col #2 winner
+    assert gg.compute_utility([['buffer'], [' X '], ['OOO'], ['OOO'],  # opposing player -> col #2 winner
                                                [' O '], ['OO '], [' X '],
                                                ['XX '], ['OO '], ['XXX']], 'X') == -1
 
-    assert gg.new_compute_utility([['buffer'], [' X '], ['OOO'], ['OOO'],  # current player -> diag #1 winner
+    assert gg.compute_utility([['buffer'], [' X '], ['OOO'], ['OOO'],  # current player -> diag #1 winner
                                                [' O '], ['XX '], [' X '],
                                                ['XX '], ['OO '], ['XXX']], 'X') == 1
 
-    assert gg.new_compute_utility([['buffer'], [' O '], ['OOO'], ['XXX'],  # current player -> diag #2 winner
+    assert gg.compute_utility([['buffer'], [' O '], ['OOO'], ['XXX'],  # current player -> diag #2 winner
                                                [' O '], ['XX '], ['OO '],
                                                ['XX '], ['OO '], ['XXX']], 'X') == 1
 
-    assert gg.new_compute_utility([['buffer'], [' X '], ['XX '], ['XXX'],  # 2 wins: current player -> row #1 & #3 winner
+    assert gg.compute_utility([['buffer'], [' X '], ['XX '], ['XXX'],  # 2 wins: current player -> row #1 & #3 winner
                                                [' O '], ['OO '], [' X '],
                                                ['XX '], ['XX '], ['XXX']], 'X') == 1
 
-    assert gg.new_compute_utility([['buffer'], [' X '], ['XX '], ['OOO'],  # 2 wins: current player -> col #1 & #2 winner
+    assert gg.compute_utility([['buffer'], [' X '], ['XX '], ['OOO'],  # 2 wins: current player -> col #1 & #2 winner
                                                [' X '], ['XX '], [' X '],
                                                ['XX '], ['XX '], ['OOO']], 'X') == 1
 
-    assert gg.new_compute_utility([['buffer'], [' X '], ['OO '], ['XXX'],  # 2 wins: current player -> diag #1 & #2 winner
+    assert gg.compute_utility([['buffer'], [' X '], ['OO '], ['XXX'],  # 2 wins: current player -> diag #1 & #2 winner
                                                [' O '], ['XX '], [' O '],
                                                ['XX '], ['OOO'], ['XXX']], 'X') == 1
 
-    assert gg.new_compute_utility([['buffer'], [' X '], ['OO '], ['XXX'],  # 2 col wins: opposing player is winner
+    assert gg.compute_utility([['buffer'], [' X '], ['OO '], ['XXX'],  # 2 col wins: opposing player is winner
                                                [' X '], ['OO '], [' O '],
                                                ['XX '], ['OO '], ['XXX']], 'X') == -1
 
-    assert gg.new_compute_utility([['buffer'], [' X '], ['XX '], ['XXX'],  # 2 row wins: opposing player is winner
+    assert gg.compute_utility([['buffer'], [' X '], ['XX '], ['XXX'],  # 2 row wins: opposing player is winner
                                                [' O '], ['OO '], [' O '],
                                                ['XX '], ['OO '], ['XXX']], 'X') == -1
+
+
+def test_vector_encoding():
+
+    gg = GobletGobblers()
+
+    # Test 1: Empty board, initial bank, X to move - PASS
+    test_state_1 = GobletGobblersGameState(to_move='X',
+                                           utility=0,
+                                           board=['buffer', ['   '], ['   '], ['   '], ['   '], ['   '], ['   '], ['   '], ['   '], ['   ']],
+                                           bank=['XXX', 'XXX', 'XX ', 'XX ', ' X ', ' X ', 'OOO', 'OOO', 'OO ', 'OO ', ' O ', ' O '])
+    test_vector_1 = gg.vector_encoding(test_state_1)
+    expected_vector_1 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 2, 2, 1, 1, 6, 6, 5, 5, 4, 4, 0]
+    assert test_vector_1 == expected_vector_1
+
+
+    # Test 2: Board with a Single Piece, Partial Bank, X to Move - PASS
+    test_state_2 = GobletGobblersGameState(to_move='X',
+                                           utility=0,
+                                           board=['buffer', ['   ', ' X '], ['   '], ['   '], ['   '], ['   '], ['   '], ['   '], ['   '], ['   ']],
+                                           bank=['XXX', 'XXX', 'XX ', 'XX ', ' X ', '   ', 'OOO', 'OOO', 'OO ', 'OO ', ' O ', ' O '])
+
+    expected_vector_2 = [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 2, 2, 1, 0, 6, 6, 5, 5, 4, 4, 0]
+    test_vector_2 = gg.vector_encoding(test_state_2)
+    assert test_vector_2 == expected_vector_2
+
+
+    # Test 3: Mid-Game Complex Board, Partial Bank, O to Move - PASS
+    test_state_3 = GobletGobblersGameState(to_move='O',
+                                           utility=0,
+                                           board=['buffer', ['   ', ' X ', 'OOO'], ['   '], ['   ', ' O '], ['   '], ['   ', ' X ', 'XX '], ['   ', 'XXX'], ['   ', ' OO'], ['   '], ['   ', 'XXX']],
+                                           bank=['   ', '   ', '   ', 'XX ', '   ', '   ', 'OOO', '   ', 'OO ', '   ', ' O ', '   '])
+    expected_vector_3 = [6, 1, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 2, 1, 0, 0, 3, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 2, 0, 0, 6, 0, 5, 0, 4, 0, 1]
+    test_vector_3 = gg.vector_encoding(test_state_3)
+    assert test_vector_3 == expected_vector_3
+
+
+    # Test 4: Full Board, No Bank Pieces, X to Move - PASS
+    test_state_4 = GobletGobblersGameState(to_move='X',
+                                           utility=0,
+                                           board=['buffer', ['   ', ' O ', 'XX '],        ['   ', 'OOO'], ['   ', ' XX', 'OOO'],
+                                                            ['   ', ' X ', ' OO'],        ['   ', 'XXX'], ['   ', ' X ', ' OO'],
+                                                                          ['   '], ['   ', ' O ', 'XXX'],               ['   ']],
+                                           bank=['   ', '   ', '   ', '   ', '   ', '   ', '   ', '   ', '   ', '   ', '   ', '   '])
+    expected_vector_4 = [2, 4, 0, 0, 6, 0, 0, 0, 6, 2, 0, 0, 5, 1, 0, 0, 3, 0, 0, 0, 5, 1, 0, 0, 0, 0, 0, 0, 3, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    test_vector_4 = gg.vector_encoding(test_state_4)
+    assert test_vector_4 == expected_vector_4
+
+
+
+    # Test 5: Mid-game, O to Move - PASS
+    test_state_5 = GobletGobblersGameState(to_move='O',
+                                           utility=0,
+                                           board=['buffer', ['   ', 'XX '],               ['   '], ['   ', ' XX', 'OOO'],
+                                                            ['   ', ' X ', ' OO'], ['   ', 'XXX'],        ['   ', ' OO'],
+                                                            ['   '],               ['   ', ' O '],              ['   ']],
+                                           bank=['XXX', '   ', '   ', '   ', '   ', ' X ', 'OOO', '   ', '   ', '   ', '   ', ' O '])
+    test_vector_5 = gg.vector_encoding(test_state_5)
+    expected_vector_5 = [2, 0, 0, 0, 0, 0, 0, 0, 6, 2, 0, 0, 5, 1, 0, 0, 3, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 1, 6, 0, 0, 0, 0, 4, 1]
+    assert test_vector_5 == expected_vector_5
