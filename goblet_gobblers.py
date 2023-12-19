@@ -224,10 +224,10 @@ class GobletGobblers:
         while True:
             # for each player in game
             for player in players:
-                # print(state.board)
-                # print(state.bank)
-                # print(state.to_move)
                 self.display(state)
+                self.vector_encoding(state)
+                print(state.board)
+                print(state.bank)
                 # get move to make
                 move = player(self, state)
 
@@ -341,7 +341,7 @@ class GobletGobblers:
 
         return score
 
-    def vector_encoding(self, state):
+    def vector_encoding(self, state_to_encode):
         """Encodes state into a vector (for use as input into a neural net)
 
             vector = [board, bank, to move]
@@ -397,16 +397,18 @@ class GobletGobblers:
 
         encoded_vector = []
 
+        state = copy.deepcopy(state_to_encode)
+
         # loop through board spots
         for spot in state.board:
             # skip buffer spot
             if spot == 'buffer':
                 continue
-            # reverse to get list in order (left-right == top-bottom)
-            spot.reverse()
             # if spot < length 4: pad with empty pieces
             while len(spot) < 4:
-                spot.append('   ')
+                spot.insert(0, '   ')
+            # reverse to get list in order (left-right == top-bottom)
+            spot.reverse()
             # get piece conversion and append to vector
             for piece in spot:
                 encoded_vector.append(piece_conversions[(piece.count('X'), piece.count('O'))])
@@ -418,5 +420,4 @@ class GobletGobblers:
         # append player conversion to vector
         encoded_vector.append(0) if state.to_move == 'X' else encoded_vector.append(1)
 
-        # print(flat_vector)
         return encoded_vector
