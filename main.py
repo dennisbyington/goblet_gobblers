@@ -22,14 +22,15 @@ def main():
     # create model instance, load & set to evaluation mode
     model = GobletGobblersNet()
     model.load_state_dict(torch.load('goblet_gobblers_model.pt'))
-    model.eval()  # todo : set to evaluation mode
 
-    # train & save model
-    # model.train_nn(gg, num_games=1000)
-    # torch.save(model.state_dict(), 'goblet_gobblers_model.pt')
-
-    # start game
-    gg.play_game(args.X, args.O, verbose=args.v, model=model)
+    if args.t:
+        # train & save model
+        model.train_nn(gg, num_games=args.t)
+        torch.save(model.state_dict(), 'goblet_gobblers_model.pt')
+    else:
+        # set model to evaluation mode & start game
+        model.eval()
+        gg.play_game(args.X, args.O, verbose=args.v, model=model)
 
 
 # ------------------------

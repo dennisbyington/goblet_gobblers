@@ -28,6 +28,12 @@ def get_args():
                         help='Seed for random module',
                         metavar='int')  # help type
 
+    parser.add_argument('-t',  # flag (train nn)
+                        type=int,
+                        default=None,
+                        help='Train neural net [Number games] *will save updated model*',
+                        metavar='+int')  # help type
+
     parser.add_argument('-v',  # flag (verbose)
                         action='store_true',  # action is to store a true value (default = false)
                         help='Print verbose game information')
