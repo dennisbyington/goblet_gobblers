@@ -8,29 +8,29 @@ def get_args():
     parser = argparse.ArgumentParser(description='CLI implementation of the Goblet Gobblers board game',
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-    parser.add_argument('-X',                         # flag (player x)
-                        type=str,                     # type
-                        choices=['random', 'human', 'alpha-beta'],  # choices
-                        default='random',             # default
-                        help='Player type for X: "random, ""human", or "alpha-beta"',     # help description
-                        metavar='str')                # help type
+    parser.add_argument('-X',  # flag (player x)
+                        type=str,
+                        choices=['random', 'human', 'alpha_beta', 'neural_net'],
+                        default='random',
+                        help='Player type for X: [random, human, alpha_beta, neural_net]',
+                        metavar='str')  # help type
 
-    parser.add_argument('-O',                         # flag (player o)
-                        type=str,                     # type
-                        choices=['random', 'human', 'alpha-beta'],  # choices
-                        default='random',             # default
-                        help='Player type for X: "random, ""human", or "alpha-beta"',     # help description
-                        metavar='str')                # help type
+    parser.add_argument('-O',  # flag (player o)
+                        type=str,
+                        choices=['random', 'human', 'alpha_beta', 'neural_net'],
+                        default='random',
+                        help='Player type for O: [random, human, alpha_beta, neural_net]',
+                        metavar='str')  # help type
 
-    parser.add_argument('-r',                           # flag (random seed)
-                        type=int,                       # type
-                        default=None,                   # default
-                        help='Seed for random module',  # help description
-                        metavar='int')                  # help type
+    parser.add_argument('-r',  # flag (random seed)
+                        type=int,
+                        default=None,
+                        help='Seed for random module',
+                        metavar='int')  # help type
 
-    parser.add_argument('-v',                                   # flag (verbose)
-                        action='store_true',                    # action (default = false)
-                        help='Print verbose game information')  # help description
+    parser.add_argument('-v',  # flag (verbose)
+                        action='store_true',  # action is to store a true value (default = false)
+                        help='Print verbose game information')
 
     args = parser.parse_args()
 
@@ -38,13 +38,17 @@ def get_args():
         args.X = players.random_player
     if args.X == 'human':
         args.X = players.human_player
-    if args.X == 'alpha-beta':
+    if args.X == 'alpha_beta':
         args.X = players.alpha_beta_cutoff_player
+    if args.X == 'neural_net':
+        args.X = players.neural_net_player
     if args.O == 'random':
         args.O = players.random_player
     if args.O == 'human':
         args.O = players.human_player
-    if args.O == 'alpha-beta':
+    if args.O == 'alpha_beta':
         args.O = players.alpha_beta_cutoff_player
+    if args.O == 'neural_net':
+        args.O = players.neural_net_player
 
     return args
