@@ -4,18 +4,15 @@ import random
 from searches import alpha_beta_cutoff_search
 
 
-def random_player(game, state):
+def random_player(game, state, model=None):
     """Returns a random move from all available moves"""
     return random.choice(game.actions(state)) if game.actions(state) else None
 
 
-def human_player(game, state, verbose=False):
+def human_player(game, state, model=None):
     """Prompts human player for move inputs - checks for valid move"""
 
     game.display(state)
-    if verbose:
-        print(f'utility: {state.utility}')
-        print(f'to_move: {state.to_move}')
 
     while True:
 
@@ -38,6 +35,11 @@ def human_player(game, state, verbose=False):
             continue
 
 
-def alpha_beta_cutoff_player(game, state):
+def alpha_beta_cutoff_player(game, state, model=None):
     """Returns a move obtained from alpha-beta search"""
     return alpha_beta_cutoff_search(state, game, eval_fn=game.heuristic)
+
+
+def neural_net_player(game, state, model):
+    """Returns a move obtained from neural net"""
+    return model.get_nn_move(game, state)

@@ -215,7 +215,7 @@ class GobletGobblers:
             else:
                 return -1 if player == 'X' else 1
 
-    def play_game(self, *players, verbose=False):
+    def play_game(self, *players, verbose=False, model=None):
         """Play an n-person, move-alternating game.  Returns final state utility"""
 
         # get initial state of the game
@@ -224,12 +224,8 @@ class GobletGobblers:
         while True:
             # for each player in game
             for player in players:
-                self.display(state)
-                self.vector_encoding(state)
-                print(state.board)
-                print(state.bank)
                 # get move to make
-                move = player(self, state)
+                move = player(self, state, model)
 
                 if verbose and player == random_player:
                     self.print_verbose(state, 'random_mid_game', move)
