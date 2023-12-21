@@ -20,6 +20,8 @@ class GobletGobblersNet(nn.Module):
         self.layer1 = nn.Linear(49, 128)  # First hidden layer
         self.layer2 = nn.Linear(128, 64)  # Second hidden layer
         self.layer3 = nn.Linear(64, 180)  # Output layer
+        # Track number of training games
+        self.games_played = 0
 
     def forward(self, x):
         # Forward pass through the network
@@ -216,6 +218,8 @@ class GobletGobblersNet(nn.Module):
                 # Backward pass and optimize
                 loss.backward()
                 optimizer.step()
+
+            self.games_played += 1
 
         # check post training
         weight_check_post = copy.deepcopy(self.state_dict()['layer1.weight'][0])

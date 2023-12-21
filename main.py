@@ -22,11 +22,16 @@ def main():
     # create model instance, load & set to evaluation mode
     model = GobletGobblersNet()
     model.load_state_dict(torch.load('goblet_gobblers_model.pt'))
+    with open('games_played.txt', 'r') as f_in:
+        model.games_played = int(f_in.read().strip())
+    print(model.games_played)
 
     if args.t:
         # train & save model
         model.train_nn(gg, num_games=args.t)
         torch.save(model.state_dict(), 'goblet_gobblers_model.pt')
+        with open('games_played.txt', 'w') as f_out:
+            f_out.write(str(model.games_played))
     else:
         # set model to evaluation mode & start game
         model.eval()
