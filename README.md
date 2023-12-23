@@ -18,27 +18,29 @@ A pdf of the board games rules can be found in goblet_gobblers_rules.pdf
 
 Additional rules can be found here: https://docs.racket-lang.org/games/gobblet.html
 
+
 # Usage
 
 Default play is 2 random players.  
 
 X always goes first.
 
-You may choose to make X or O a human player or a min-max (alpha-beta with heuristic) player.  
+You may choose to make X or O a human player or a min-max (alpha-beta with heuristic) player, or a neural net player.  
 
 The final state is always shown and final state utility is always returned (int).
 
-Human players are shown the game state before each move.  You may add verbose flag to display state information at each move and also show board during random player moves.
+Human players are shown the game state before each move.  You may add verbose flag to display state information at each move and also show board during computer player moves.
 
 
-    usage: main.py [-h] [-X str] [-O str] [-v]
+    usage: main.py main.py [-h] [-X str] [-O str] [-r int] [-t +int] [-v]
 
     options:
-      -h, --help     show this help message and exit
-      -X str         Player type for X: "random, ""human", or "alpha-beta" (default: random)
-      -O str         Player type for X: "random, ""human", or "alpha-beta" (default: random)
+      -h, --help     Show this help message and exit
+      -X str         Player type for X: [random, human, alpha_beta, neural_net] (default: random)
+      -O str         Player type for O: [random, human, alpha_beta, neural_net] (default: random)
+      -r int         Seed for random module (default: None)
+      -t +int        Train neural net [Number games] *will save updated model* (default: None)      
       -v, --verbose  Print verbose game information (default: False)
-
 
 
 # Data structures
@@ -78,8 +80,11 @@ dennisbyington@mac.com
 
 # Version history & release notes
 
+- 0.4 - Neural-net 
+    - Incorporated fully connected neural net
+    - Trained on 500k games (plays very poorly)
 - 0.3 - Min-max alpha beta (with heuristic) 
-    - Incorporated Min-Max Alpha-Beta (with heuristic) search (search parameters not optimized yet)
+    - Incorporated Min-Max Alpha-Beta (with heuristic) search (plays poorly)
     - Based on Alpha-Beta-Cutoff search from the textbook "Artificial Intelligence: A Modern Approach"
 - 0.2 - State based
     - Refactored to state based implementation in preparation for ML learning algo
@@ -94,7 +99,8 @@ No known bugs.  However, I am seeking inputs and constructive criticism on areas
 
 # Future features
 
-- Train a neural net to play the game
+- Better train the model
+- Use trained model to discover optimal heuristic parameters
 - Remove buffer from board
 - Implement play_game_dict()
 - Change piece format: ('X', 3)
