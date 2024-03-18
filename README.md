@@ -62,7 +62,7 @@ Human players are shown the game state before each move.  You may add verbose fl
 # Dependencies
 
 - Python3
-- Imports: argparse, collections, copy, numpy, random
+- Install required dependencies via 'pip3 install -r requirements.txt'
 
 
 # Help

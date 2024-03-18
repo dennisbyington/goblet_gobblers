@@ -4,3 +4,4 @@
 *.xml
 todo.txt
 to_learn.txt
+__pycache__
